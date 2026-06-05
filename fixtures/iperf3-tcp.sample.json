@@ -1,0 +1,11 @@
+{
+  "end": {
+    "sum_sent": {
+      "bits_per_second": 930000000,
+      "retransmits": 3
+    },
+    "sum_received": {
+      "bits_per_second": 910000000
+    }
+  }
+}

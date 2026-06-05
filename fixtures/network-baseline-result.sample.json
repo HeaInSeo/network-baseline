@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "network-baseline.v1",
+  "runId": "network-baseline-sample",
+  "startedAt": "2026-06-05T00:00:00Z",
+  "finishedAt": "2026-06-05T00:00:10Z",
+  "cluster": {
+    "namespace": "network-baseline",
+    "serverPod": "iperf3-server-sample",
+    "serverNode": "worker-a",
+    "clientPod": "iperf3-client-sample",
+    "clientNode": "worker-b"
+  },
+  "scenario": {
+    "name": "service-tcp",
+    "protocol": "tcp",
+    "path": "pod-service-pod",
+    "parallel": 1,
+    "durationSeconds": 10
+  },
+  "iperf3": {},
+  "metrics": {
+    "bitsPerSecond": 900000000,
+    "bytesPerSecond": 112500000,
+    "retransmits": 2,
+    "jitterMs": 0,
+    "lostPercent": 0
+  },
+  "status": "pass"
+}
+

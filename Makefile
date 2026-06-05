@@ -1,0 +1,28 @@
+.PHONY: validate summary-smoke kustomize
+
+validate:
+	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh
+	python3 -m py_compile tools/summary/summarize-network-baseline.py
+	$(MAKE) summary-smoke
+	$(MAKE) kustomize
+
+summary-smoke:
+	python3 tools/summary/summarize-network-baseline.py \
+	  --iperf-json fixtures/iperf3-tcp.sample.json \
+	  --out /tmp/network-baseline-tcp.result.json \
+	  --run-id local-summary-smoke \
+	  --scenario fixture-tcp \
+	  --protocol tcp \
+	  --profile operational \
+	  --thresholds policy/network-baseline-thresholds.yaml
+	python3 tools/summary/summarize-network-baseline.py \
+	  --iperf-json fixtures/iperf3-udp.sample.json \
+	  --out /tmp/network-baseline-udp.result.json \
+	  --run-id local-summary-smoke \
+	  --scenario fixture-udp \
+	  --protocol udp \
+	  --profile operational \
+	  --thresholds policy/network-baseline-thresholds.yaml
+
+kustomize:
+	kubectl kustomize deploy/iperf3 >/tmp/network-baseline-kustomize.yaml

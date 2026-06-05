@@ -1,0 +1,28 @@
+schemaVersion: network-baseline.thresholds.v1
+profiles:
+  smoke:
+    tcpBitsPerSecond:
+      warnBelow: 100000000
+      failBelow: 50000000
+    udpBitsPerSecond:
+      warnBelow: 50000000
+      failBelow: 10000000
+    retransmits:
+      warnAbove: 100
+      failAbove: 500
+    udpLostPercent:
+      warnAbove: 1
+      failAbove: 5
+  operational:
+    tcpBitsPerSecond:
+      warnBelow: 500000000
+      failBelow: 100000000
+    udpBitsPerSecond:
+      warnBelow: 100000000
+      failBelow: 50000000
+    retransmits:
+      warnAbove: 50
+      failAbove: 200
+    udpLostPercent:
+      warnAbove: 0.5
+      failAbove: 2

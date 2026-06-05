@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iperf3-server
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: iperf3-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: network-baseline
+      app.kubernetes.io/component: iperf3-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: network-baseline
+        app.kubernetes.io/component: iperf3-server
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: iperf3
+          image: networkstatic/iperf3:latest
+          imagePullPolicy: IfNotPresent
+          args: ["-s", "-p", "5201"]
+          ports:
+            - name: iperf3
+              containerPort: 5201
+              protocol: TCP
+            - name: iperf3-udp
+              containerPort: 5201
+              protocol: UDP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: "1"
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iperf3-server
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: iperf3-server
+spec:
+  selector:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: iperf3-server
+  ports:
+    - name: iperf3
+      port: 5201
+      targetPort: iperf3
+      protocol: TCP
+    - name: iperf3-udp
+      port: 5201
+      targetPort: iperf3-udp
+      protocol: UDP
+
