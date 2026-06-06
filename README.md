@@ -85,6 +85,7 @@ artifacts/network-baseline/
 docs/
   BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
   KUBERNETES_NETWORK_HEALTH_CHECKS.ko.md
+  NETWORK_BASELINE_REPORTING.ko.md
   NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
   PROVIDER_NEUTRAL_OBSERVABILITY_BASELINE.ko.md
   REMOTE_VM_INFRA_LAB_RUNBOOK.ko.md
@@ -105,6 +106,7 @@ deploy/checks/
 fixtures/
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
+  matrix-summary.sample.json
   networkbaselinepolicy.sample.yaml
   networkbaselinerun.sample.yaml
   network-baseline-result.sample.json
@@ -123,6 +125,8 @@ scripts/
   run-k8s-object-snapshot.sh
 tools/summary/
   summarize-network-baseline.py
+tools/report/
+  render-network-baseline-report.py
 ```
 
 ## Local Validation
@@ -147,6 +151,13 @@ The bori operator integration contract draft is available at:
 
 ```text
 docs/BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
+```
+
+Generate a Markdown report from a matrix run:
+
+```bash
+python3 tools/report/render-network-baseline-report.py \
+  --run-dir artifacts/network-baseline/<run-id>
 ```
 
 ## Operational Exit Criteria

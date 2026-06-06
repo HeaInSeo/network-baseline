@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "network-baseline.matrix.v1",
+  "runId": "network-baseline-sample",
+  "status": "warn",
+  "results": [
+    {
+      "schemaVersion": "network-baseline.health.v1",
+      "runId": "network-baseline-sample",
+      "scenario": {
+        "name": "dns-service-discovery",
+        "type": "dns-service-discovery"
+      },
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.v1",
+      "runId": "network-baseline-sample",
+      "scenario": {
+        "name": "service-tcp",
+        "protocol": "tcp",
+        "path": "pod-service-pod",
+        "placement": "any"
+      },
+      "metrics": {
+        "bitsPerSecond": 910000000,
+        "retransmits": 3
+      },
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.health.v1",
+      "runId": "network-baseline-sample",
+      "scenario": {
+        "name": "conntrack-snapshot",
+        "type": "conntrack-snapshot"
+      },
+      "status": "warn",
+      "reasons": [
+        "one or more nodes have conntrack warning signals"
+      ]
+    },
+    {
+      "schemaVersion": "network-baseline.health.v1",
+      "runId": "network-baseline-sample",
+      "scenario": {
+        "name": "provider-detection",
+        "type": "provider-detection"
+      },
+      "providers": [
+        {
+          "name": "cilium",
+          "kind": "cni",
+          "detected": false,
+          "status": "skipped",
+          "reasons": [
+            "provider not detected"
+          ]
+        },
+        {
+          "name": "istio",
+          "kind": "mesh",
+          "detected": true,
+          "status": "pass",
+          "reasons": []
+        }
+      ],
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.health.v1",
+      "runId": "network-baseline-sample",
+      "scenario": {
+        "name": "k8s-object-snapshot",
+        "type": "k8s-object-snapshot"
+      },
+      "counts": {
+        "nodes": 3,
+        "pods_all": 42,
+        "services_all": 18
+      },
+      "status": "pass",
+      "reasons": []
+    }
+  ]
+}

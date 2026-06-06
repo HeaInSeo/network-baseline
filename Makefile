@@ -1,9 +1,11 @@
-.PHONY: validate summary-smoke kustomize checks-kustomize crd-kustomize
+.PHONY: validate summary-smoke report-smoke kustomize checks-kustomize crd-kustomize
 
 validate:
 	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
+	python3 -m py_compile tools/report/render-network-baseline-report.py
 	$(MAKE) summary-smoke
+	$(MAKE) report-smoke
 	$(MAKE) kustomize
 	$(MAKE) checks-kustomize
 	$(MAKE) crd-kustomize
@@ -25,6 +27,13 @@ summary-smoke:
 	  --protocol udp \
 	  --profile operational \
 	  --thresholds policy/network-baseline-thresholds.yaml
+
+report-smoke:
+	mkdir -p /tmp/network-baseline-report-smoke
+	cp fixtures/matrix-summary.sample.json /tmp/network-baseline-report-smoke/matrix-summary.json
+	python3 tools/report/render-network-baseline-report.py \
+	  --run-dir /tmp/network-baseline-report-smoke \
+	  --out /tmp/network-baseline-report-smoke/report.md
 
 kustomize:
 	kubectl kustomize deploy/iperf3 >/tmp/network-baseline-kustomize.yaml
