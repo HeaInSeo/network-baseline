@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: network-baseline-deny-iperf3-ingress
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: networkpolicy-check
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: network-baseline
+      app.kubernetes.io/component: iperf3-server
+  policyTypes:
+    - Ingress

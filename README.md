@@ -41,6 +41,7 @@ The default matrix currently includes:
 
 - `service-tcp`
 - `dns-service-discovery`
+- `networkpolicy-allow-deny`
 - `service-udp`
 - `pod-direct-tcp`
 - `pod-direct-udp`
@@ -59,6 +60,7 @@ SCENARIO=same-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=cross-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=fanout-tcp-5 ./scripts/run-network-baseline-fanout.sh
 SCENARIO=dns-service-discovery ./scripts/run-network-health-checks.sh
+SCENARIO=networkpolicy-allow-deny ./scripts/run-network-policy-checks.sh
 ```
 
 Artifacts are written under:
@@ -101,6 +103,7 @@ scripts/
   run-network-baseline-matrix.sh
   run-network-baseline-fanout.sh
   run-network-health-checks.sh
+  run-network-policy-checks.sh
 tools/summary/
   summarize-network-baseline.py
 ```

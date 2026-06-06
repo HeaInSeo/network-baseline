@@ -16,6 +16,8 @@ run_one() {
 
 env RUN_ID="${RUN_ID}" SCENARIO="dns-service-discovery" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-network-health-checks.sh"
+env RUN_ID="${RUN_ID}" SCENARIO="networkpolicy-allow-deny" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-network-policy-checks.sh"
 run_one service-tcp tcp
 run_one service-udp udp
 run_one pod-direct-tcp tcp
