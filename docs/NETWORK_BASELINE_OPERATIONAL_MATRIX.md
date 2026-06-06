@@ -30,7 +30,7 @@ Minimum operational profile:
 
 ## Failure Interpretation
 
-- `service-tcp` fails, direct Pod passes: Service/CNI/kube-proxy/Cilium path issue.
+- `service-tcp` fails, direct Pod passes: Service/CNI/kube-proxy or provider-specific service path issue.
 - direct Pod fails: Pod-to-Pod dataplane issue.
 - `cross-node-service-tcp` fails, `same-node-service-tcp` passes: node-to-node network issue.
 - `cross-node-service-tcp` is skipped: cluster does not have at least two schedulable nodes.

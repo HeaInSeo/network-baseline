@@ -47,7 +47,8 @@ make validate
 - MTU/fragmentation smoke는 `mtu-smoke`로 1차 구현됨
 - node-to-node reachability는 `node-to-node-reachability`로 1차 구현됨
 - conntrack snapshot은 `conntrack-snapshot`으로 1차 구현됨
-- Cilium/Hubble artifact 수집은 아직 없음
+- provider-neutral observability baseline은 문서화됨
+- CNI/mesh/gateway provider detection은 아직 구현 전
 - 큰 이미지 pull, registry, 대용량 데이터 경로 baseline은 아직 없음
 - CLI 단일 바이너리나 operator/CRD 형태는 아직 없음
 
@@ -159,42 +160,44 @@ DNS, Service discovery, NetworkPolicy, MTU, node reachability를 preflight에
 ./scripts/run-network-health-checks.sh
 ```
 
-## Sprint N3 - Cilium/Hubble baseline
+## Sprint N3 - Provider-neutral observability baseline
 
 기간: 5-7일
 
 목표:
 
-Cilium 기반 클러스터에서 datapath 상태와 flow 관측 가능성을 artifact로 남긴다.
+특정 CNI/mesh/gateway에 의존하지 않는 관측 기준을 만들고, Cilium/Istio/Linkerd/Calico
+같은 provider는 선택 snapshot으로 수집한다.
 
 작업 항목:
 
-- Cilium 설치 여부 감지
-- `cilium status` snapshot 수집
-- Hubble 사용 가능 여부 감지
-- Hubble flow 수집
-- dropped flow 수집
-- policy verdict 수집
-- same-node/cross-node별 Cilium 경로 비교
-- Cilium 미설치 환경에서는 skip reason 기록
+- provider detection 구현
+- core Kubernetes object snapshot 수집
+- CNI provider 감지
+- mesh provider 감지
+- gateway/ingress provider 감지
+- Cilium optional snapshot 수집
+- Istio optional snapshot 수집
+- provider 미감지 환경에서는 skip reason 기록
 
 예상 산출물:
 
-- `scripts/collect-cilium-snapshot.sh`
-- `scripts/collect-hubble-flows.sh`
-- `docs/CILIUM_HUBBLE_BASELINE.ko.md`
-- result JSON 내 `cilium`, `hubble` section
+- `scripts/run-provider-detection.sh`
+- `docs/PROVIDER_NEUTRAL_OBSERVABILITY_BASELINE.ko.md`
+- result JSON 내 `providers` section
+- optional provider artifact
 
 완료 기준:
 
-- Cilium 환경에서 status/flow/drop artifact가 남음
-- Cilium 미설치 환경에서 실패가 아니라 `skipped`로 표현됨
-- 네트워크 실패 시 Hubble drop/policy verdict와 연결해서 볼 수 있음
+- CNI/mesh/gateway가 없어도 core baseline은 실패하지 않음
+- provider가 감지되지 않으면 `skipped`로 표현됨
+- provider가 감지되면 기본 상태 snapshot이 artifact로 남음
+- bori가 provider result를 optional gate evidence로 소비할 수 있음
 
 검증 명령:
 
 ```bash
-CILIUM_BASELINE=1 ./scripts/run-network-baseline-matrix.sh
+./scripts/run-provider-detection.sh
 ```
 
 ## Sprint N4 - 유전체 워크로드 환경 baseline
@@ -390,7 +393,7 @@ Skipped
 
 - same-node/cross-node
 - DNS/Service discovery
-- Cilium/Hubble snapshot
+- provider detection snapshot
 - 큰 이미지 pull
 - 대용량 데이터 경로
 - fan-out churn
@@ -421,7 +424,7 @@ CNI, DNS, registry, storage, fan-out이 먼저다.
 1. 실제 클러스터에서 `./scripts/run-network-baseline-matrix.sh` 실행
 2. single-node 환경에서 `cross-node-service-tcp`가 `skipped`로 기록되는지 확인
 3. multi-node 환경에서 `same-node-service-tcp`, `cross-node-service-tcp` 배치가 의도대로 잡히는지 확인
-4. Cilium/Hubble datapath snapshot 추가
+4. provider detection snapshot 추가
 5. `fanout-tcp-10`, `fanout-tcp-20` 확장
 
 작업 시작 전 확인:

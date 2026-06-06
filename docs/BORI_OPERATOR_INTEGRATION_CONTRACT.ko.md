@@ -224,11 +224,16 @@ cluster-snapshot.json
 node-snapshot.json
 cilium-status.json
 hubble-flows.json
+provider-detection.result.json
 image-pull.result.json
 storage.result.json
 fanout.result.json
 report.md
 ```
+
+Provider artifact는 optional이다. provider가 없다는 이유로 baseline이 실패해서는
+안 된다. provider가 감지되면 bori는 해당 artifact를 rollout evidence로 보존하고,
+policy에 따라 blocking 여부를 결정한다.
 
 ## App Target Contract
 
@@ -274,4 +279,3 @@ rollout manager와 연결할 때 사용한다.
 3. CLI/script가 `NetworkBaselineRun` 샘플과 같은 result를 만들도록 정렬
 4. bori 쪽에서 CRD를 읽는 adapter 또는 controller 초안 작성
 5. rollout gate에 `status.result` 연결
-

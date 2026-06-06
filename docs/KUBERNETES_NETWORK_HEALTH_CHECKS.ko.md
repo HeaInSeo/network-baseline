@@ -181,7 +181,7 @@ artifacts/network-baseline/<run-id>/conntrack-snapshot.raw/<node>.log
 
 - 이 check는 노드 상태를 변경하지 않는 read-only snapshot이다.
 - host `/proc` 마운트를 사용하므로 운영 정책상 허용 여부를 확인해야 한다.
-- Cilium 환경에서는 Hubble/Cilium drop signal과 함께 해석해야 한다.
+- Cilium 같은 provider가 있는 환경에서는 provider-specific drop/flow signal과 함께 해석한다.
 
 ## 해석
 
@@ -192,7 +192,7 @@ artifacts/network-baseline/<run-id>/conntrack-snapshot.raw/<node>.log
 - short name은 fail이고 FQDN은 pass:
   Pod namespace, search domain, DNS config를 본다.
 - DNS는 pass이고 TCP connect가 fail:
-  Service selector, endpoint, NetworkPolicy, kube-proxy/Cilium service path를 본다.
+  Service selector, endpoint, NetworkPolicy, kube-proxy 또는 provider-specific service path를 본다.
 - `networkpolicy-allow-deny=fail`, allow check 실패:
   policy selector, endpoint, Service path를 먼저 본다.
 - `networkpolicy-allow-deny=fail`, deny check 실패:
@@ -206,4 +206,4 @@ artifacts/network-baseline/<run-id>/conntrack-snapshot.raw/<node>.log
 
 ## 다음 확장
 
-- Cilium/Hubble datapath snapshot
+- provider-neutral observability snapshot
