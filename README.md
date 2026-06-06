@@ -45,6 +45,7 @@ The default matrix currently includes:
 - `pod-direct-udp`
 - `same-node-service-tcp`
 - `cross-node-service-tcp`
+- `fanout-tcp-5`
 
 Single-node clusters record `cross-node-service-tcp` as `skipped`.
 
@@ -55,6 +56,7 @@ SCENARIO=pod-direct-tcp ./scripts/run-network-baseline.sh
 SCENARIO=pod-direct-udp ./scripts/run-network-baseline.sh
 SCENARIO=same-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=cross-node-service-tcp ./scripts/run-network-baseline.sh
+SCENARIO=fanout-tcp-5 ./scripts/run-network-baseline-fanout.sh
 ```
 
 Artifacts are written under:
@@ -92,6 +94,7 @@ policy/
 scripts/
   run-network-baseline.sh
   run-network-baseline-matrix.sh
+  run-network-baseline-fanout.sh
 tools/summary/
   summarize-network-baseline.py
 ```

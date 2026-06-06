@@ -1,7 +1,7 @@
 .PHONY: validate summary-smoke kustomize crd-kustomize
 
 validate:
-	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh
+	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
 	$(MAKE) summary-smoke
 	$(MAKE) kustomize
