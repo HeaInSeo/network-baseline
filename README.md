@@ -47,6 +47,7 @@ artifacts/network-baseline/
 
 ```text
 docs/
+  NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
   NETWORK_BASELINE_SCOPE.md
   NETWORK_BASELINE_SPRINT_PLAN.md
   NETWORK_BASELINE_RESULT_SCHEMA.md
@@ -78,6 +79,14 @@ make validate
 This validates shell syntax, compiles the summary tool, runs summary smoke tests
 against bundled iperf3 fixtures, and renders the Kubernetes manifests through
 Kustomize.
+
+## Planning
+
+The detailed Korean operational sprint plan is available at:
+
+```text
+docs/NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
+```
 
 ## Operational Exit Criteria
 
