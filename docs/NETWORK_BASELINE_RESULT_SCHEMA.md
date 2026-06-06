@@ -21,6 +21,7 @@ Date: 2026-06-05
     "name": "service-tcp",
     "protocol": "tcp",
     "path": "pod-service-pod",
+    "placement": "cross-node",
     "parallel": 1,
     "durationSeconds": 10
   },
@@ -46,6 +47,7 @@ Date: 2026-06-05
 - `scenario.name`
 - `scenario.protocol`
 - `scenario.path`
+- `scenario.placement`
 - `metrics.bitsPerSecond`
 - `status`
 
@@ -64,4 +66,3 @@ The schema is intentionally flat enough to be consumed by:
 - Python summary tools
 - kube-slint summary fixtures
 - future bori operational gates
-

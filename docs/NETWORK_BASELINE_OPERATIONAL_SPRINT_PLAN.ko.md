@@ -39,8 +39,8 @@ make validate
 
 현재 한계:
 
-- Pod IP 직접 경로는 아직 없음
-- same-node, cross-node 배치 고정은 아직 없음
+- Pod IP 직접 경로는 `pod-direct-tcp`, `pod-direct-udp`로 1차 구현됨
+- same-node, cross-node 배치 고정은 TCP service 경로 기준으로 1차 구현됨
 - fan-out 부하 테스트는 아직 없음
 - DNS, Service discovery, NetworkPolicy 검증은 아직 없음
 - Cilium/Hubble artifact 수집은 아직 없음
@@ -414,11 +414,11 @@ CNI, DNS, registry, storage, fan-out이 먼저다.
 
 추천 첫 작업:
 
-1. `pod-direct-tcp` scenario 추가
-2. `pod-direct-udp` scenario 추가
-3. same-node/cross-node 배치 고정 추가
-4. matrix summary에 scenario별 node placement 기록
-5. 실제 클러스터에서 `./scripts/run-network-baseline-matrix.sh` 실행
+1. 실제 클러스터에서 `./scripts/run-network-baseline-matrix.sh` 실행
+2. single-node 환경에서 `cross-node-service-tcp`가 `skipped`로 기록되는지 확인
+3. multi-node 환경에서 `same-node-service-tcp`, `cross-node-service-tcp` 배치가 의도대로 잡히는지 확인
+4. fan-out scenario 추가
+5. DNS/Service discovery check 추가
 
 작업 시작 전 확인:
 
@@ -457,4 +457,3 @@ git status -sb
   분리 가능
 - 결과 artifact가 JSON과 Markdown으로 남음
 - app repo와 bori가 같은 result schema를 소비할 수 있음
-

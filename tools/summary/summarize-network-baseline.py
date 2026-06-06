@@ -130,7 +130,12 @@ parser.add_argument("--run-id", required=True)
 parser.add_argument("--scenario", required=True)
 parser.add_argument("--protocol", default="tcp", choices=["tcp", "udp"])
 parser.add_argument("--path", default="pod-service-pod")
+parser.add_argument("--placement", default="any")
 parser.add_argument("--namespace", default="network-baseline")
+parser.add_argument("--server-pod", default="")
+parser.add_argument("--server-node", default="")
+parser.add_argument("--client-pod", default="")
+parser.add_argument("--client-node", default="")
 parser.add_argument("--started-at", default="")
 parser.add_argument("--finished-at", default="")
 args = parser.parse_args()
@@ -148,11 +153,16 @@ result = {
     "finishedAt": args.finished_at,
     "cluster": {
         "namespace": args.namespace,
+        "serverPod": args.server_pod,
+        "serverNode": args.server_node,
+        "clientPod": args.client_pod,
+        "clientNode": args.client_node,
     },
     "scenario": {
         "name": args.scenario,
         "protocol": args.protocol,
         "path": args.path,
+        "placement": args.placement,
     },
     "iperf3": iperf,
     "metrics": metrics,

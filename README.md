@@ -37,6 +37,26 @@ Run the default matrix:
 ./scripts/run-network-baseline-matrix.sh
 ```
 
+The default matrix currently includes:
+
+- `service-tcp`
+- `service-udp`
+- `pod-direct-tcp`
+- `pod-direct-udp`
+- `same-node-service-tcp`
+- `cross-node-service-tcp`
+
+Single-node clusters record `cross-node-service-tcp` as `skipped`.
+
+Run one scenario:
+
+```bash
+SCENARIO=pod-direct-tcp ./scripts/run-network-baseline.sh
+SCENARIO=pod-direct-udp ./scripts/run-network-baseline.sh
+SCENARIO=same-node-service-tcp ./scripts/run-network-baseline.sh
+SCENARIO=cross-node-service-tcp ./scripts/run-network-baseline.sh
+```
+
 Artifacts are written under:
 
 ```text

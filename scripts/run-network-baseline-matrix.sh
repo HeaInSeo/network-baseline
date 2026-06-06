@@ -16,6 +16,10 @@ run_one() {
 
 run_one service-tcp tcp
 run_one service-udp udp
+run_one pod-direct-tcp tcp
+run_one pod-direct-udp udp
+run_one same-node-service-tcp tcp
+run_one cross-node-service-tcp tcp
 
 python3 - <<PY
 import json
@@ -39,4 +43,3 @@ summary = {
 (root / "matrix-summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 print(f"matrix: {status} results={len(results)} path={root / 'matrix-summary.json'}")
 PY
-
