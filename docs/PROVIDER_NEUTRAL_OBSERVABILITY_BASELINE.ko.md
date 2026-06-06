@@ -176,9 +176,29 @@ bori gate 기본값:
 
 ## 다음 구현 순서
 
-1. `provider-detection` snapshot 구현
+1. `provider-detection` snapshot 구현 완료
 2. Cilium optional snapshot 구현
 3. Istio optional snapshot 구현
 4. provider별 artifact를 matrix summary에 포함
 5. bori policy에서 optional provider result의 blocking 여부를 표현
 
+## 실행
+
+```bash
+./scripts/run-provider-detection.sh
+```
+
+matrix 실행에도 포함된다.
+
+```bash
+./scripts/run-network-baseline-matrix.sh
+```
+
+결과 파일:
+
+```text
+artifacts/network-baseline/<run-id>/provider-detection.result.json
+artifacts/network-baseline/<run-id>/provider-detection.namespaces.txt
+artifacts/network-baseline/<run-id>/provider-detection.crds.txt
+artifacts/network-baseline/<run-id>/provider-detection.pods_all.txt
+```

@@ -48,7 +48,7 @@ make validate
 - node-to-node reachability는 `node-to-node-reachability`로 1차 구현됨
 - conntrack snapshot은 `conntrack-snapshot`으로 1차 구현됨
 - provider-neutral observability baseline은 문서화됨
-- CNI/mesh/gateway provider detection은 아직 구현 전
+- CNI/mesh/gateway provider detection은 `provider-detection`으로 1차 구현됨
 - 큰 이미지 pull, registry, 대용량 데이터 경로 baseline은 아직 없음
 - CLI 단일 바이너리나 operator/CRD 형태는 아직 없음
 
@@ -171,7 +171,7 @@ DNS, Service discovery, NetworkPolicy, MTU, node reachability를 preflight에
 
 작업 항목:
 
-- provider detection 구현
+- provider detection 구현 완료
 - core Kubernetes object snapshot 수집
 - CNI provider 감지
 - mesh provider 감지
@@ -424,7 +424,7 @@ CNI, DNS, registry, storage, fan-out이 먼저다.
 1. 실제 클러스터에서 `./scripts/run-network-baseline-matrix.sh` 실행
 2. single-node 환경에서 `cross-node-service-tcp`가 `skipped`로 기록되는지 확인
 3. multi-node 환경에서 `same-node-service-tcp`, `cross-node-service-tcp` 배치가 의도대로 잡히는지 확인
-4. provider detection snapshot 추가
+4. Cilium optional snapshot 추가
 5. `fanout-tcp-10`, `fanout-tcp-20` 확장
 
 작업 시작 전 확인:
