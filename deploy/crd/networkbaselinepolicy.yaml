@@ -1,0 +1,88 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: networkbaselinepolicies.baseline.heainseo.dev
+spec:
+  group: baseline.heainseo.dev
+  scope: Namespaced
+  names:
+    plural: networkbaselinepolicies
+    singular: networkbaselinepolicy
+    kind: NetworkBaselinePolicy
+    shortNames:
+      - nbp
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - profile
+              properties:
+                profile:
+                  type: string
+                  enum:
+                    - smoke
+                    - operational
+                thresholdsRef:
+                  type: object
+                  properties:
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                defaultScenarios:
+                  type: array
+                  items:
+                    type: string
+                warnBehavior:
+                  type: string
+                  enum:
+                    - allow
+                    - require-approval
+                    - block
+                  default: require-approval
+            status:
+              type: object
+              properties:
+                observedGeneration:
+                  type: integer
+                  format: int64
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Profile
+          type: string
+          jsonPath: .spec.profile
+        - name: Warn Behavior
+          type: string
+          jsonPath: .spec.warnBehavior
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp

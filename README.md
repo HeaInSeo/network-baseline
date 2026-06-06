@@ -47,6 +47,7 @@ artifacts/network-baseline/
 
 ```text
 docs/
+  BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
   NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
   NETWORK_BASELINE_SCOPE.md
   NETWORK_BASELINE_SPRINT_PLAN.md
@@ -57,9 +58,14 @@ docs/
 deploy/iperf3/
   server.yaml
   client-job.yaml
+deploy/crd/
+  networkbaselinepolicy.yaml
+  networkbaselinerun.yaml
 fixtures/
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
+  networkbaselinepolicy.sample.yaml
+  networkbaselinerun.sample.yaml
   network-baseline-result.sample.json
 policy/
   network-baseline-thresholds.yaml
@@ -86,6 +92,12 @@ The detailed Korean operational sprint plan is available at:
 
 ```text
 docs/NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
+```
+
+The bori operator integration contract draft is available at:
+
+```text
+docs/BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
 ```
 
 ## Operational Exit Criteria

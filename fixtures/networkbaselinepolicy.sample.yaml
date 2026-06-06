@@ -1,0 +1,16 @@
+apiVersion: baseline.heainseo.dev/v1alpha1
+kind: NetworkBaselinePolicy
+metadata:
+  name: operational
+  namespace: network-baseline
+spec:
+  profile: operational
+  thresholdsRef:
+    kind: ConfigMap
+    name: network-baseline-thresholds
+  defaultScenarios:
+    - service-tcp
+    - service-udp
+    - pod-direct-tcp
+    - cross-node-tcp
+  warnBehavior: require-approval

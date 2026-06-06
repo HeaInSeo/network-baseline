@@ -1,0 +1,44 @@
+apiVersion: baseline.heainseo.dev/v1alpha1
+kind: NetworkBaselineRun
+metadata:
+  name: jumi-preflight
+  namespace: network-baseline
+spec:
+  policyRef:
+    name: operational
+  target:
+    app: jumi
+    namespace: jumi-system
+    version: v0.1.1
+    rollout: pre-upgrade
+  scenarios:
+    - service-tcp
+    - service-udp
+    - cross-node-tcp
+  artifact:
+    mode: local
+    path: artifacts/network-baseline
+  timeoutSeconds: 600
+status:
+  phase: Completed
+  result: pass
+  runId: network-baseline-20260606T000000Z
+  artifactRef:
+    path: artifacts/network-baseline/network-baseline-20260606T000000Z
+    summary: artifacts/network-baseline/network-baseline-20260606T000000Z/matrix-summary.json
+  conditions:
+    - type: CollectionComplete
+      status: "True"
+      reason: ArtifactsCollected
+      message: All requested scenario artifacts were collected.
+      lastTransitionTime: "2026-06-06T00:00:00Z"
+    - type: EvaluationComplete
+      status: "True"
+      reason: ThresholdsEvaluated
+      message: All requested scenarios were evaluated.
+      lastTransitionTime: "2026-06-06T00:00:00Z"
+    - type: BaselinePassed
+      status: "True"
+      reason: ThresholdsSatisfied
+      message: All requested scenarios passed operational thresholds.
+      lastTransitionTime: "2026-06-06T00:00:00Z"

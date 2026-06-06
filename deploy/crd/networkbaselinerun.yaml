@@ -1,0 +1,140 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: networkbaselineruns.baseline.heainseo.dev
+spec:
+  group: baseline.heainseo.dev
+  scope: Namespaced
+  names:
+    plural: networkbaselineruns
+    singular: networkbaselinerun
+    kind: NetworkBaselineRun
+    shortNames:
+      - nbr
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            spec:
+              type: object
+              required:
+                - policyRef
+                - target
+              properties:
+                policyRef:
+                  type: object
+                  required:
+                    - name
+                  properties:
+                    name:
+                      type: string
+                target:
+                  type: object
+                  required:
+                    - app
+                    - namespace
+                  properties:
+                    app:
+                      type: string
+                    namespace:
+                      type: string
+                    version:
+                      type: string
+                    rollout:
+                      type: string
+                      enum:
+                        - install
+                        - pre-upgrade
+                        - post-upgrade
+                        - periodic
+                        - manual
+                scenarios:
+                  type: array
+                  items:
+                    type: string
+                artifact:
+                  type: object
+                  properties:
+                    mode:
+                      type: string
+                      enum:
+                        - local
+                        - object-storage
+                        - configmap
+                      default: local
+                    path:
+                      type: string
+                timeoutSeconds:
+                  type: integer
+                  minimum: 1
+            status:
+              type: object
+              properties:
+                observedGeneration:
+                  type: integer
+                  format: int64
+                phase:
+                  type: string
+                  enum:
+                    - Pending
+                    - Running
+                    - Evaluating
+                    - Completed
+                    - Failed
+                    - Skipped
+                result:
+                  type: string
+                  enum:
+                    - pass
+                    - warn
+                    - fail
+                    - skipped
+                runId:
+                  type: string
+                artifactRef:
+                  type: object
+                  properties:
+                    path:
+                      type: string
+                    summary:
+                      type: string
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - type
+                      - status
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Target
+          type: string
+          jsonPath: .spec.target.app
+        - name: Phase
+          type: string
+          jsonPath: .status.phase
+        - name: Result
+          type: string
+          jsonPath: .status.result
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
