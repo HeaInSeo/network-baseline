@@ -7,7 +7,8 @@
 N2 단계는 iperf3 throughput만으로 설명되지 않는 Kubernetes 네트워크 운영 신호를
 분리한다.
 
-현재는 `dns-service-discovery`, `networkpolicy-allow-deny` check를 지원한다.
+현재는 `dns-service-discovery`, `networkpolicy-allow-deny`, `mtu-smoke` check를
+지원한다.
 
 ## 현재 지원 항목
 
@@ -87,6 +88,39 @@ artifacts/network-baseline/<run-id>/networkpolicy-allow-deny.deny.log
 - deny check가 연결되면 `fail`이다. 이는 NetworkPolicy가 적용되지 않았거나
   CNI가 policy enforcement를 제공하지 않는 상황일 수 있다.
 
+### `mtu-smoke`
+
+검증 항목:
+
+- check Pod에서 iperf3 server Pod IP로 ICMP ping 실행
+- 기본 payload size: `1200 1400 1472`
+- payload size를 올려가며 기본적인 MTU/fragmentation 이상 여부 확인
+
+실행:
+
+```bash
+./scripts/run-mtu-smoke-check.sh
+```
+
+원격 VM 기반 K8s 환경에서 size를 조정하려면:
+
+```bash
+PING_PAYLOAD_SIZES="1200 1400 1472 8972" ./scripts/run-mtu-smoke-check.sh
+```
+
+결과 파일:
+
+```text
+artifacts/network-baseline/<run-id>/mtu-smoke.result.json
+artifacts/network-baseline/<run-id>/mtu-smoke.log
+```
+
+주의:
+
+- 현재 구현은 smoke check다. DF bit 기반의 정확한 path MTU discovery가 아니다.
+- ICMP가 차단된 환경에서는 MTU 문제가 아니어도 fail이 날 수 있다.
+- 실패 시 CNI, VM NIC MTU, overlay MTU, node 간 경로, ICMP policy를 함께 본다.
+
 ## 해석
 
 - `dns-service-discovery=fail`, iperf3도 fail:
@@ -101,9 +135,10 @@ artifacts/network-baseline/<run-id>/networkpolicy-allow-deny.deny.log
   policy selector, endpoint, Service path를 먼저 본다.
 - `networkpolicy-allow-deny=fail`, deny check 실패:
   CNI NetworkPolicy enforcement 또는 policy 적용 상태를 본다.
+- `mtu-smoke=fail`:
+  VM NIC MTU, CNI overlay MTU, node 간 경로, ICMP 허용 여부를 본다.
 
 ## 다음 확장
 
-- MTU/fragmentation smoke
 - node-to-node reachability
 - conntrack pressure snapshot

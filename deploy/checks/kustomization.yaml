@@ -5,3 +5,4 @@ resources:
   - networkpolicy-connect-job.yaml
   - networkpolicy-deny-iperf3-ingress.yaml
   - networkpolicy-allow-policy-check.yaml
+  - mtu-ping-job.yaml

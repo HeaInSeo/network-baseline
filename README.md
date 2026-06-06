@@ -42,6 +42,7 @@ The default matrix currently includes:
 - `service-tcp`
 - `dns-service-discovery`
 - `networkpolicy-allow-deny`
+- `mtu-smoke`
 - `service-udp`
 - `pod-direct-tcp`
 - `pod-direct-udp`
@@ -61,6 +62,7 @@ SCENARIO=cross-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=fanout-tcp-5 ./scripts/run-network-baseline-fanout.sh
 SCENARIO=dns-service-discovery ./scripts/run-network-health-checks.sh
 SCENARIO=networkpolicy-allow-deny ./scripts/run-network-policy-checks.sh
+SCENARIO=mtu-smoke ./scripts/run-mtu-smoke-check.sh
 ```
 
 Artifacts are written under:
@@ -76,6 +78,7 @@ docs/
   BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
   KUBERNETES_NETWORK_HEALTH_CHECKS.ko.md
   NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
+  REMOTE_VM_INFRA_LAB_RUNBOOK.ko.md
   NETWORK_BASELINE_SCOPE.md
   NETWORK_BASELINE_SPRINT_PLAN.md
   NETWORK_BASELINE_RESULT_SCHEMA.md
@@ -104,6 +107,7 @@ scripts/
   run-network-baseline-fanout.sh
   run-network-health-checks.sh
   run-network-policy-checks.sh
+  run-mtu-smoke-check.sh
 tools/summary/
   summarize-network-baseline.py
 ```

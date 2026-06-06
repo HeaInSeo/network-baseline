@@ -18,6 +18,8 @@ env RUN_ID="${RUN_ID}" SCENARIO="dns-service-discovery" ARTIFACT_DIR="${ARTIFACT
   "${ROOT_DIR}/scripts/run-network-health-checks.sh"
 env RUN_ID="${RUN_ID}" SCENARIO="networkpolicy-allow-deny" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-network-policy-checks.sh"
+env RUN_ID="${RUN_ID}" SCENARIO="mtu-smoke" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-mtu-smoke-check.sh"
 run_one service-tcp tcp
 run_one service-udp udp
 run_one pod-direct-tcp tcp
