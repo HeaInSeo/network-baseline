@@ -26,6 +26,8 @@ env RUN_ID="${RUN_ID}" SCENARIO="conntrack-snapshot" ARTIFACT_DIR="${ARTIFACT_DI
   "${ROOT_DIR}/scripts/run-conntrack-snapshot.sh"
 env RUN_ID="${RUN_ID}" SCENARIO="provider-detection" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-provider-detection.sh"
+env RUN_ID="${RUN_ID}" SCENARIO="k8s-object-snapshot" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-k8s-object-snapshot.sh"
 run_one service-tcp tcp
 run_one service-udp udp
 run_one pod-direct-tcp tcp

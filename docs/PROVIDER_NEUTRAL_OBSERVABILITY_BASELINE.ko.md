@@ -41,6 +41,15 @@ Provider detection
   -> mesh 감지
   -> gateway 감지
 
+Core object snapshot
+  -> nodes
+  -> pods
+  -> services
+  -> endpoints/endpointslices
+  -> networkpolicies
+  -> events
+  -> kube-system pods
+
 Optional provider snapshots
   -> cilium
   -> istio
@@ -177,15 +186,16 @@ bori gate 기본값:
 ## 다음 구현 순서
 
 1. `provider-detection` snapshot 구현 완료
-2. Cilium optional snapshot 구현
-3. Istio optional snapshot 구현
-4. provider별 artifact를 matrix summary에 포함
+2. `k8s-object-snapshot` 구현 완료
+3. Cilium optional snapshot 구현
+4. Istio optional snapshot 구현
 5. bori policy에서 optional provider result의 blocking 여부를 표현
 
 ## 실행
 
 ```bash
 ./scripts/run-provider-detection.sh
+./scripts/run-k8s-object-snapshot.sh
 ```
 
 matrix 실행에도 포함된다.
@@ -201,4 +211,7 @@ artifacts/network-baseline/<run-id>/provider-detection.result.json
 artifacts/network-baseline/<run-id>/provider-detection.namespaces.txt
 artifacts/network-baseline/<run-id>/provider-detection.crds.txt
 artifacts/network-baseline/<run-id>/provider-detection.pods_all.txt
+artifacts/network-baseline/<run-id>/k8s-object-snapshot.result.json
+artifacts/network-baseline/<run-id>/k8s-object-snapshot.nodes.json
+artifacts/network-baseline/<run-id>/k8s-object-snapshot.pods_all.json
 ```

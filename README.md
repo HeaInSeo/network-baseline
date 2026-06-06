@@ -46,6 +46,7 @@ The default matrix currently includes:
 - `node-to-node-reachability`
 - `conntrack-snapshot`
 - `provider-detection`
+- `k8s-object-snapshot`
 - `service-udp`
 - `pod-direct-tcp`
 - `pod-direct-udp`
@@ -69,6 +70,7 @@ SCENARIO=mtu-smoke ./scripts/run-mtu-smoke-check.sh
 SCENARIO=node-to-node-reachability ./scripts/run-node-reachability-check.sh
 SCENARIO=conntrack-snapshot ./scripts/run-conntrack-snapshot.sh
 SCENARIO=provider-detection ./scripts/run-provider-detection.sh
+SCENARIO=k8s-object-snapshot ./scripts/run-k8s-object-snapshot.sh
 ```
 
 Artifacts are written under:
@@ -118,6 +120,7 @@ scripts/
   run-node-reachability-check.sh
   run-conntrack-snapshot.sh
   run-provider-detection.sh
+  run-k8s-object-snapshot.sh
 tools/summary/
   summarize-network-baseline.py
 ```
