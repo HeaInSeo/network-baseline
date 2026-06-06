@@ -7,8 +7,8 @@
 N2 단계는 iperf3 throughput만으로 설명되지 않는 Kubernetes 네트워크 운영 신호를
 분리한다.
 
-현재는 `dns-service-discovery`, `networkpolicy-allow-deny`, `mtu-smoke` check를
-지원한다.
+현재는 `dns-service-discovery`, `networkpolicy-allow-deny`, `mtu-smoke`,
+`node-to-node-reachability` check를 지원한다.
 
 ## 현재 지원 항목
 
@@ -121,6 +121,34 @@ artifacts/network-baseline/<run-id>/mtu-smoke.log
 - ICMP가 차단된 환경에서는 MTU 문제가 아니어도 fail이 날 수 있다.
 - 실패 시 CNI, VM NIC MTU, overlay MTU, node 간 경로, ICMP policy를 함께 본다.
 
+### `node-to-node-reachability`
+
+검증 항목:
+
+- DaemonSet으로 각 노드에 check Pod 배치
+- 각 check Pod에서 다른 check Pod IP로 ICMP ping 실행
+- source node, target node, target Pod IP, exit code를 artifact로 기록
+
+실행:
+
+```bash
+./scripts/run-node-reachability-check.sh
+```
+
+결과 파일:
+
+```text
+artifacts/network-baseline/<run-id>/node-to-node-reachability.result.json
+artifacts/network-baseline/<run-id>/node-to-node-reachability.log
+artifacts/network-baseline/<run-id>/node-to-node-reachability.pods.json
+```
+
+주의:
+
+- 단일 노드 환경에서는 `skipped`로 기록된다.
+- ICMP가 차단된 환경에서는 node-to-node datapath 문제가 아니어도 fail이 날 수 있다.
+- `KEEP_NODE_REACHABILITY_PODS=1`을 지정하면 디버깅용 Pod를 남긴다.
+
 ## 해석
 
 - `dns-service-discovery=fail`, iperf3도 fail:
@@ -137,8 +165,9 @@ artifacts/network-baseline/<run-id>/mtu-smoke.log
   CNI NetworkPolicy enforcement 또는 policy 적용 상태를 본다.
 - `mtu-smoke=fail`:
   VM NIC MTU, CNI overlay MTU, node 간 경로, ICMP 허용 여부를 본다.
+- `node-to-node-reachability=fail`:
+  node 간 라우팅, CNI overlay, 방화벽, ICMP policy를 본다.
 
 ## 다음 확장
 
-- node-to-node reachability
 - conntrack pressure snapshot

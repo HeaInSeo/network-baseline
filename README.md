@@ -43,6 +43,7 @@ The default matrix currently includes:
 - `dns-service-discovery`
 - `networkpolicy-allow-deny`
 - `mtu-smoke`
+- `node-to-node-reachability`
 - `service-udp`
 - `pod-direct-tcp`
 - `pod-direct-udp`
@@ -63,6 +64,7 @@ SCENARIO=fanout-tcp-5 ./scripts/run-network-baseline-fanout.sh
 SCENARIO=dns-service-discovery ./scripts/run-network-health-checks.sh
 SCENARIO=networkpolicy-allow-deny ./scripts/run-network-policy-checks.sh
 SCENARIO=mtu-smoke ./scripts/run-mtu-smoke-check.sh
+SCENARIO=node-to-node-reachability ./scripts/run-node-reachability-check.sh
 ```
 
 Artifacts are written under:
@@ -108,6 +110,7 @@ scripts/
   run-network-health-checks.sh
   run-network-policy-checks.sh
   run-mtu-smoke-check.sh
+  run-node-reachability-check.sh
 tools/summary/
   summarize-network-baseline.py
 ```

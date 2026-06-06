@@ -6,3 +6,4 @@ resources:
   - networkpolicy-deny-iperf3-ingress.yaml
   - networkpolicy-allow-policy-check.yaml
   - mtu-ping-job.yaml
+  - node-reachability-daemonset.yaml
