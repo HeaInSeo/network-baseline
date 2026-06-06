@@ -22,6 +22,8 @@ env RUN_ID="${RUN_ID}" SCENARIO="mtu-smoke" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-mtu-smoke-check.sh"
 env RUN_ID="${RUN_ID}" SCENARIO="node-to-node-reachability" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-node-reachability-check.sh"
+env RUN_ID="${RUN_ID}" SCENARIO="conntrack-snapshot" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-conntrack-snapshot.sh"
 run_one service-tcp tcp
 run_one service-udp udp
 run_one pod-direct-tcp tcp

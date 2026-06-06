@@ -8,7 +8,7 @@ N2 단계는 iperf3 throughput만으로 설명되지 않는 Kubernetes 네트워
 분리한다.
 
 현재는 `dns-service-discovery`, `networkpolicy-allow-deny`, `mtu-smoke`,
-`node-to-node-reachability` check를 지원한다.
+`node-to-node-reachability`, `conntrack-snapshot` check를 지원한다.
 
 ## 현재 지원 항목
 
@@ -149,6 +149,40 @@ artifacts/network-baseline/<run-id>/node-to-node-reachability.pods.json
 - ICMP가 차단된 환경에서는 node-to-node datapath 문제가 아니어도 fail이 날 수 있다.
 - `KEEP_NODE_REACHABILITY_PODS=1`을 지정하면 디버깅용 Pod를 남긴다.
 
+### `conntrack-snapshot`
+
+검증 항목:
+
+- DaemonSet으로 각 노드에 read-only snapshot Pod 배치
+- host `/proc`를 read-only로 마운트
+- `nf_conntrack_count`, `nf_conntrack_max` 수집
+- count/max 기준 사용률을 계산해 warn/fail 판정
+
+실행:
+
+```bash
+./scripts/run-conntrack-snapshot.sh
+```
+
+결과 파일:
+
+```text
+artifacts/network-baseline/<run-id>/conntrack-snapshot.result.json
+artifacts/network-baseline/<run-id>/conntrack-snapshot.raw/<node>.log
+```
+
+판정 기준:
+
+- 사용률 70% 이상: `warn`
+- 사용률 90% 이상: `fail`
+- count/max를 읽을 수 없음: `warn`
+
+주의:
+
+- 이 check는 노드 상태를 변경하지 않는 read-only snapshot이다.
+- host `/proc` 마운트를 사용하므로 운영 정책상 허용 여부를 확인해야 한다.
+- Cilium 환경에서는 Hubble/Cilium drop signal과 함께 해석해야 한다.
+
 ## 해석
 
 - `dns-service-discovery=fail`, iperf3도 fail:
@@ -167,7 +201,9 @@ artifacts/network-baseline/<run-id>/node-to-node-reachability.pods.json
   VM NIC MTU, CNI overlay MTU, node 간 경로, ICMP 허용 여부를 본다.
 - `node-to-node-reachability=fail`:
   node 간 라우팅, CNI overlay, 방화벽, ICMP policy를 본다.
+- `conntrack-snapshot=warn/fail`:
+  fan-out, DNS/Service churn, short-lived connection 폭증, kube-proxy/CNI conntrack 의존 경로를 본다.
 
 ## 다음 확장
 
-- conntrack pressure snapshot
+- Cilium/Hubble datapath snapshot
