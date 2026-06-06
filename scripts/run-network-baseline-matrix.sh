@@ -14,6 +14,8 @@ run_one() {
     "${ROOT_DIR}/scripts/run-network-baseline.sh"
 }
 
+env RUN_ID="${RUN_ID}" SCENARIO="dns-service-discovery" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-network-health-checks.sh"
 run_one service-tcp tcp
 run_one service-udp udp
 run_one pod-direct-tcp tcp

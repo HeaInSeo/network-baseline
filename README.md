@@ -40,6 +40,7 @@ Run the default matrix:
 The default matrix currently includes:
 
 - `service-tcp`
+- `dns-service-discovery`
 - `service-udp`
 - `pod-direct-tcp`
 - `pod-direct-udp`
@@ -57,6 +58,7 @@ SCENARIO=pod-direct-udp ./scripts/run-network-baseline.sh
 SCENARIO=same-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=cross-node-service-tcp ./scripts/run-network-baseline.sh
 SCENARIO=fanout-tcp-5 ./scripts/run-network-baseline-fanout.sh
+SCENARIO=dns-service-discovery ./scripts/run-network-health-checks.sh
 ```
 
 Artifacts are written under:
@@ -70,6 +72,7 @@ artifacts/network-baseline/
 ```text
 docs/
   BORI_OPERATOR_INTEGRATION_CONTRACT.ko.md
+  KUBERNETES_NETWORK_HEALTH_CHECKS.ko.md
   NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
   NETWORK_BASELINE_SCOPE.md
   NETWORK_BASELINE_SPRINT_PLAN.md
@@ -83,6 +86,8 @@ deploy/iperf3/
 deploy/crd/
   networkbaselinepolicy.yaml
   networkbaselinerun.yaml
+deploy/checks/
+  dns-service-job.yaml
 fixtures/
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
@@ -95,6 +100,7 @@ scripts/
   run-network-baseline.sh
   run-network-baseline-matrix.sh
   run-network-baseline-fanout.sh
+  run-network-health-checks.sh
 tools/summary/
   summarize-network-baseline.py
 ```

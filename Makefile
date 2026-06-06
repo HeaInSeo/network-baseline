@@ -1,10 +1,11 @@
-.PHONY: validate summary-smoke kustomize crd-kustomize
+.PHONY: validate summary-smoke kustomize checks-kustomize crd-kustomize
 
 validate:
-	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh
+	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
 	$(MAKE) summary-smoke
 	$(MAKE) kustomize
+	$(MAKE) checks-kustomize
 	$(MAKE) crd-kustomize
 
 summary-smoke:
@@ -27,6 +28,9 @@ summary-smoke:
 
 kustomize:
 	kubectl kustomize deploy/iperf3 >/tmp/network-baseline-kustomize.yaml
+
+checks-kustomize:
+	kubectl kustomize deploy/checks >/tmp/network-baseline-checks-kustomize.yaml
 
 crd-kustomize:
 	kubectl kustomize deploy/crd >/tmp/network-baseline-crd-kustomize.yaml
