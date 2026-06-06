@@ -207,17 +207,29 @@ DNS, Service discovery, NetworkPolicy, MTU, node reachability를 preflight에
 
 목표:
 
-유전체 분석 app의 실제 운영 병목인 큰 이미지, registry, 대용량 데이터 경로,
-fan-out churn을 baseline에 포함한다.
+유전체 분석 app의 실제 운영 병목인 큰 이미지, registry, remote fetch,
+node-local reuse, fan-out churn을 baseline에 포함한다.
+
+중요 제약:
+
+- PVC는 사용하지 않는다.
+- shared PVC 기반 storage benchmark는 이 스프린트 범위에서 제외한다.
+- object storage는 필수 전제가 아니라 선택 transport/backend 후보로만 취급한다.
+- JUMI service image와 nan/runtime/tool image를 혼동하지 않는다.
+- AH는 Kubernetes Job/Pod를 생성하지 않고, placement/materialization 결정을 제공한다.
+- JUMI가 Job/Pod 생성과 nan runtime context/env 주입을 담당한다.
+- nan은 컨테이너 내부 runtime shim이며, Kubernetes API나 AH API를 직접 호출하지 않는다.
 
 작업 항목:
 
 - 큰 컨테이너 이미지 pull 시간 측정
 - registry 접근성 측정
 - registry pull 실패/지연 artifact 기록
-- PVC read/write smoke 추가
-- object storage read/write smoke 추가
-- 대용량 파일 전송 baseline 추가
+- remote_fetch HTTP 경로 baseline 추가
+- remote_fetch digest verification 결과 기록
+- same-node node-local local_reuse 경로 baseline 추가
+- node-local path/CAS 가용성 및 cleanup evidence 기록
+- 대용량 HTTP fetch baseline 추가
 - 병렬 Job fan-out scenario 추가
 - Job 완료 후 TTL/GC 상태 기록
 - Pod churn 시 DNS/CNI/API server 영향 기록
@@ -225,15 +237,19 @@ fan-out churn을 baseline에 포함한다.
 예상 산출물:
 
 - `docs/GENOMIC_DATAPLANE_ENVIRONMENT_BASELINE.ko.md`
-- `deploy/storage/pvc-read-write-job.yaml`
+- `deploy/genomic/image-pull-job.yaml`
+- `deploy/genomic/remote-fetch-http-job.yaml`
+- `deploy/genomic/local-reuse-same-node-job.yaml`
 - `deploy/fanout/fanout-client-job.yaml`
 - `scripts/run-genomic-environment-baseline.sh`
-- result JSON 내 `imagePull`, `registry`, `storage`, `fanout`, `gc` section
+- result JSON 내 `imagePull`, `registry`, `remoteFetch`, `localReuse`, `fanout`, `gc` section
 
 완료 기준:
 
 - 큰 이미지 pull 병목과 네트워크 throughput 병목을 분리 가능
-- PVC/object storage 병목과 Pod network 병목을 분리 가능
+- registry/image pull 병목과 Pod network 병목을 분리 가능
+- remote_fetch 실패를 DNS/Service/HTTP/digest 층으로 분리 가능
+- local_reuse 실패를 placement/node-local path/cleanup 층으로 분리 가능
 - 병렬 Job 증가에 따른 warn/fail 기준이 존재
 - 운영자가 app 실행 전에 환경 적합성을 판단할 수 있음
 
