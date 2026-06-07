@@ -43,15 +43,26 @@ fi
 mkdir -p "${ARTIFACT_DIR}"
 
 kubectl get namespace "${NAMESPACE}" >/dev/null 2>&1 || kubectl create namespace "${NAMESPACE}"
-kubectl -n "${NAMESPACE}" apply -f "${ROOT_DIR}/deploy/iperf3/server.yaml"
-kubectl -n "${NAMESPACE}" rollout status deploy/iperf3-server --timeout=120s
 
 started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-server_pod="$(kubectl -n "${NAMESPACE}" get pod -l app.kubernetes.io/name=network-baseline,app.kubernetes.io/component=iperf3-server -o jsonpath='{.items[0].metadata.name}')"
-server_node="$(kubectl -n "${NAMESPACE}" get pod "${server_pod}" -o jsonpath='{.spec.nodeName}')"
 extra_args="-t ${IPERF_DURATION} -P ${IPERF_PARALLEL}"
 
 for index in $(seq 1 "${FANOUT_CLIENTS}"); do
+  server_name="iperf3-server-${SCENARIO}-${index}"
+  server_yaml="${ARTIFACT_DIR}/${SCENARIO}.server-${index}.yaml"
+  python3 - <<PY
+from pathlib import Path
+
+src = Path("${ROOT_DIR}/deploy/iperf3/server.yaml").read_text(encoding="utf-8")
+src = src.replace("iperf3-server", "${server_name}")
+Path("${server_yaml}").write_text(src, encoding="utf-8")
+PY
+  kubectl -n "${NAMESPACE}" apply -f "${server_yaml}"
+  kubectl -n "${NAMESPACE}" rollout status "deploy/${server_name}" --timeout=120s
+done
+
+for index in $(seq 1 "${FANOUT_CLIENTS}"); do
+  server_name="iperf3-server-${SCENARIO}-${index}"
   job_name="iperf3-client-${SCENARIO}-${index}-${RUN_ID,,}"
   job_name="${job_name//_/-}"
   job_name="${job_name:0:63}"
@@ -61,6 +72,7 @@ from pathlib import Path
 
 src = Path("${ROOT_DIR}/deploy/iperf3/client-job.yaml").read_text(encoding="utf-8")
 src = src.replace("name: iperf3-client", "name: ${job_name}", 1)
+src = src.replace("value: iperf3-server", "value: ${server_name}", 1)
 src = src.replace('value: "-t 10"', 'value: "${extra_args}"')
 Path("${job_yaml}").write_text(src, encoding="utf-8")
 PY
@@ -69,6 +81,9 @@ PY
 done
 
 for index in $(seq 1 "${FANOUT_CLIENTS}"); do
+  server_name="iperf3-server-${SCENARIO}-${index}"
+  server_pod="$(kubectl -n "${NAMESPACE}" get pod -l app.kubernetes.io/name=network-baseline,app.kubernetes.io/component="${server_name}" -o jsonpath='{.items[0].metadata.name}')"
+  server_node="$(kubectl -n "${NAMESPACE}" get pod "${server_pod}" -o jsonpath='{.spec.nodeName}')"
   job_name="iperf3-client-${SCENARIO}-${index}-${RUN_ID,,}"
   job_name="${job_name//_/-}"
   job_name="${job_name:0:63}"
@@ -115,6 +130,16 @@ client_results = [
     for path in sorted(root.glob("${SCENARIO}.client-*.summary.json"))
 ]
 bits = [result["metrics"]["bitsPerSecond"] for result in client_results]
+server_targets = [
+    {
+        "client": result["scenario"]["name"],
+        "serverPod": result["cluster"]["serverPod"],
+        "serverNode": result["cluster"]["serverNode"],
+        "clientPod": result["cluster"]["clientPod"],
+        "clientNode": result["cluster"]["clientNode"],
+    }
+    for result in client_results
+]
 status = "pass"
 if any(result["status"] == "fail" for result in client_results):
     status = "fail"
@@ -136,8 +161,7 @@ result = {
     "finishedAt": "${finished_at}",
     "cluster": {
         "namespace": "${NAMESPACE}",
-        "serverPod": "${server_pod}",
-        "serverNode": "${server_node}",
+        "serverTargets": server_targets,
     },
     "scenario": {
         "name": "${SCENARIO}",
