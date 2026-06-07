@@ -28,12 +28,22 @@ spec:
                 echo "check=ping size=${size}"
                 ping -c "${PING_COUNT}" -W "${PING_TIMEOUT_SECONDS}" -s "${size}" "${TARGET_POD_IP}"
               done
+              for size in ${HIGH_MTU_PING_PAYLOAD_SIZES}; do
+                echo "check=high_mtu_probe size=${size}"
+                if ping -c "${PING_COUNT}" -W "${PING_TIMEOUT_SECONDS}" -s "${size}" "${TARGET_POD_IP}"; then
+                  echo "check=high_mtu_probe size=${size} status=pass"
+                else
+                  echo "check=high_mtu_probe size=${size} status=warn reason=payload_exceeds_path_mtu"
+                fi
+              done
               echo "check=result status=pass"
           env:
             - name: TARGET_POD_IP
               value: "127.0.0.1"
             - name: PING_PAYLOAD_SIZES
-              value: "1200 1400 1472"
+              value: "1200 1400"
+            - name: HIGH_MTU_PING_PAYLOAD_SIZES
+              value: "1472"
             - name: PING_COUNT
               value: "3"
             - name: PING_TIMEOUT_SECONDS

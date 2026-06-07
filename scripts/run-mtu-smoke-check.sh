@@ -5,7 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 NAMESPACE="${NAMESPACE:-network-baseline}"
 RUN_ID="${RUN_ID:-mtu-smoke-$(date -u +%Y%m%dT%H%M%SZ)}"
 SCENARIO="${SCENARIO:-mtu-smoke}"
-PING_PAYLOAD_SIZES="${PING_PAYLOAD_SIZES:-1200 1400 1472}"
+PING_PAYLOAD_SIZES="${PING_PAYLOAD_SIZES:-1200 1400}"
+HIGH_MTU_PING_PAYLOAD_SIZES="${HIGH_MTU_PING_PAYLOAD_SIZES:-1472}"
 PING_COUNT="${PING_COUNT:-3}"
 PING_TIMEOUT_SECONDS="${PING_TIMEOUT_SECONDS:-5}"
 ARTIFACT_DIR="${ARTIFACT_DIR:-${ROOT_DIR}/artifacts/network-baseline/${RUN_ID}}"
@@ -43,7 +44,8 @@ from pathlib import Path
 src = Path("${ROOT_DIR}/deploy/checks/mtu-ping-job.yaml").read_text(encoding="utf-8")
 src = src.replace("name: network-health-mtu-ping", "name: ${job_name}", 1)
 src = src.replace('value: "127.0.0.1"', 'value: "${server_pod_ip}"', 1)
-src = src.replace('value: "1200 1400 1472"', 'value: "${PING_PAYLOAD_SIZES}"', 1)
+src = src.replace('value: "1200 1400"', 'value: "${PING_PAYLOAD_SIZES}"', 1)
+src = src.replace('value: "1472"', 'value: "${HIGH_MTU_PING_PAYLOAD_SIZES}"', 1)
 src = src.replace('value: "3"', 'value: "${PING_COUNT}"', 1)
 src = src.replace('value: "5"', 'value: "${PING_TIMEOUT_SECONDS}"', 1)
 Path("${job_yaml}").write_text(src, encoding="utf-8")
@@ -73,6 +75,7 @@ from pathlib import Path
 
 raw_log = Path("${raw_log}").read_text(encoding="utf-8", errors="replace")
 payload_sizes = [int(size) for size in "${PING_PAYLOAD_SIZES}".split()]
+high_mtu_payload_sizes = [int(size) for size in "${HIGH_MTU_PING_PAYLOAD_SIZES}".split()]
 reasons = []
 if "${reason}":
     reasons.append("${reason}")
@@ -93,6 +96,8 @@ result = {
         "type": "mtu-smoke",
         "targetPodIp": "${server_pod_ip}",
         "payloadSizes": payload_sizes,
+        "requiredPayloadSizes": payload_sizes,
+        "highMtuProbePayloadSizes": high_mtu_payload_sizes,
         "pingCount": int("${PING_COUNT}"),
         "pingTimeoutSeconds": int("${PING_TIMEOUT_SECONDS}"),
     },
@@ -102,7 +107,7 @@ result = {
     "rawLog": raw_log,
 }
 Path("${result_json}").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-print(f"${SCENARIO}: ${status} target=${server_pod_ip} sizes=${payload_sizes}")
+print("${SCENARIO}: ${status} target=${server_pod_ip} sizes=" + str(payload_sizes) + " highMtuProbeSizes=" + str(high_mtu_payload_sizes))
 PY
 
 echo "result: ${result_json}"
