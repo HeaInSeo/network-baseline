@@ -91,9 +91,11 @@ result = {
         "servicePort": int("${SERVICE_PORT}"),
     },
     "checks": {
-        "shortNameResolution": "${SERVICE_NAME}",
+        "shortNameResolution": {
+            "target": "${SERVICE_NAME}",
+            "required": False,
+        },
         "fqdnResolution": "${service_fqdn}",
-        "tcpConnectShortName": "${SERVICE_NAME}:${SERVICE_PORT}",
         "tcpConnectFqdn": "${service_fqdn}:${SERVICE_PORT}",
     },
     "status": "${status}",

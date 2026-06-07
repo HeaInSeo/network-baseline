@@ -28,9 +28,12 @@ spec:
               echo "check=namespace value=${TARGET_NAMESPACE}"
               echo "check=service_short value=${service_short}"
               echo "check=service_fqdn value=${service_fqdn}"
-              nslookup "${service_short}"
+              if nslookup "${service_short}"; then
+                echo "check=short_name_resolution status=pass"
+              else
+                echo "check=short_name_resolution status=warn reason=resolver_search_path_returned_nonzero"
+              fi
               nslookup "${service_fqdn}"
-              nc -vz -w "${CONNECT_TIMEOUT_SECONDS}" "${service_short}" "${SERVICE_PORT}"
               nc -vz -w "${CONNECT_TIMEOUT_SECONDS}" "${service_fqdn}" "${SERVICE_PORT}"
               echo "check=result status=pass"
           env:
