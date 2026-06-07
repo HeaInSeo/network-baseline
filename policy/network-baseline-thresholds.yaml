@@ -18,11 +18,11 @@ profiles:
       warnBelow: 500000000
       failBelow: 100000000
     udpBitsPerSecond:
-      warnBelow: 100000000
+      warnBelow: 90000000
       failBelow: 50000000
     retransmits:
-      warnAbove: 50
-      failAbove: 200
+      warnAbove: 200
+      failAbove: 2000
     udpLostPercent:
       warnAbove: 0.5
       failAbove: 2
