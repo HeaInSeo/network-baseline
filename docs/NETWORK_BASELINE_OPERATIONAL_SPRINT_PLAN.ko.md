@@ -219,11 +219,14 @@ node-local reuse, fan-out churn을 baseline에 포함한다.
 - AH는 Kubernetes Job/Pod를 생성하지 않고, placement/materialization 결정을 제공한다.
 - JUMI가 Job/Pod 생성과 nan runtime context/env 주입을 담당한다.
 - nan은 컨테이너 내부 runtime shim이며, Kubernetes API나 AH API를 직접 호출하지 않는다.
+- Harbor를 운영 정본 registry로 보고, GHCR은 동기화/mirror evidence로 분리한다.
 
 작업 항목:
 
 - 큰 컨테이너 이미지 pull 시간 측정
-- registry 접근성 측정
+- Harbor registry 접근성 측정
+- GHCR mirror 접근성 측정
+- Harbor/GHCR tag digest 일치 여부 기록
 - registry pull 실패/지연 artifact 기록
 - remote_fetch HTTP 경로 baseline 추가
 - remote_fetch digest verification 결과 기록
@@ -247,6 +250,7 @@ node-local reuse, fan-out churn을 baseline에 포함한다.
 완료 기준:
 
 - 큰 이미지 pull 병목과 네트워크 throughput 병목을 분리 가능
+- Harbor 정본 registry 병목과 GHCR sync/mirror 병목을 분리 가능
 - registry/image pull 병목과 Pod network 병목을 분리 가능
 - remote_fetch 실패를 DNS/Service/HTTP/digest 층으로 분리 가능
 - local_reuse 실패를 placement/node-local path/cleanup 층으로 분리 가능
