@@ -71,6 +71,9 @@ SCENARIO=node-to-node-reachability ./scripts/run-node-reachability-check.sh
 SCENARIO=conntrack-snapshot ./scripts/run-conntrack-snapshot.sh
 SCENARIO=provider-detection ./scripts/run-provider-detection.sh
 SCENARIO=k8s-object-snapshot ./scripts/run-k8s-object-snapshot.sh
+PRIMARY_IMAGE=harbor.example/heainseo/jumi@sha256:... \
+MIRROR_IMAGE=ghcr.io/heainseo/jumi@sha256:... \
+  ./scripts/run-image-pull-baseline.sh
 ```
 
 Any Kubernetes resource-apply or integration run must be followed by K8sGPT CLI
@@ -111,6 +114,8 @@ deploy/crd/
   networkbaselinerun.yaml
 deploy/checks/
   dns-service-job.yaml
+deploy/genomic/
+  image-pull-probe-pod.yaml
 fixtures/
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
@@ -132,6 +137,8 @@ scripts/
   run-provider-detection.sh
   run-k8s-object-snapshot.sh
   run-k8sgpt-analysis.sh
+  run-image-pull-baseline.sh
+  run-genomic-environment-baseline.sh
 tools/summary/
   summarize-network-baseline.py
 tools/report/

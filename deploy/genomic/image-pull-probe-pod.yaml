@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: image-pull-probe
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: image-pull-probe
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 5
+  containers:
+    - name: probe
+      image: busybox:1.36
+      imagePullPolicy: Always
+      command: ["/network-baseline-image-pull-probe"]
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi

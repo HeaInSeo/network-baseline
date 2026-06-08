@@ -1,13 +1,14 @@
-.PHONY: validate summary-smoke report-smoke kustomize checks-kustomize crd-kustomize
+.PHONY: validate summary-smoke report-smoke kustomize checks-kustomize genomic-kustomize crd-kustomize
 
 validate:
-	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh scripts/run-k8sgpt-analysis.sh
+	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh scripts/run-k8sgpt-analysis.sh scripts/run-image-pull-baseline.sh scripts/run-genomic-environment-baseline.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
 	python3 -m py_compile tools/report/render-network-baseline-report.py
 	$(MAKE) summary-smoke
 	$(MAKE) report-smoke
 	$(MAKE) kustomize
 	$(MAKE) checks-kustomize
+	$(MAKE) genomic-kustomize
 	$(MAKE) crd-kustomize
 
 summary-smoke:
@@ -40,6 +41,9 @@ kustomize:
 
 checks-kustomize:
 	kubectl kustomize deploy/checks >/tmp/network-baseline-checks-kustomize.yaml
+
+genomic-kustomize:
+	kubectl kustomize deploy/genomic >/tmp/network-baseline-genomic-kustomize.yaml
 
 crd-kustomize:
 	kubectl kustomize deploy/crd >/tmp/network-baseline-crd-kustomize.yaml

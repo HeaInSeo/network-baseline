@@ -91,6 +91,25 @@ Registry 기준:
 - Pod start latency
 - node별 편차
 
+현재 구현:
+
+```bash
+PRIMARY_IMAGE=harbor.example/heainseo/jumi@sha256:... \
+MIRROR_IMAGE=ghcr.io/heainseo/jumi@sha256:... \
+  ./scripts/run-image-pull-baseline.sh
+```
+
+`PRIMARY_IMAGE`는 Harbor 정본 이미지를 의미한다. `MIRROR_IMAGE`는 GHCR 동기화
+이미지를 의미한다. 둘 다 digest-qualified reference를 권장한다.
+
+Probe 방식:
+
+- Kubernetes Pod를 만든다.
+- 대상 image를 container image로 지정한다.
+- 존재하지 않는 command를 실행해도 image pull 자체가 성공하면 `imageID`가 기록된다.
+- `imageID`에서 digest를 추출해 Harbor/GHCR digest 일치 여부를 기록한다.
+- probe Pod는 기본적으로 evidence 수집 후 삭제한다.
+
 운영 판단:
 
 - 네트워크 throughput은 정상인데 image pull이 느린지 분리한다.
@@ -241,7 +260,7 @@ registry/data path인지, Kubernetes network/provider 문제인지 더 빨리
 
 권장 구현 순서:
 
-1. `image-pull-baseline`
+1. `image-pull-baseline` — 구현됨: `scripts/run-image-pull-baseline.sh`
 2. `registry-connectivity-baseline`
 3. `remote-fetch-http-baseline`
 4. `local-reuse-same-node-baseline`
