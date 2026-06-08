@@ -73,6 +73,13 @@ SCENARIO=provider-detection ./scripts/run-provider-detection.sh
 SCENARIO=k8s-object-snapshot ./scripts/run-k8s-object-snapshot.sh
 ```
 
+Any Kubernetes resource-apply or integration run must be followed by K8sGPT CLI
+diagnosis. The matrix script runs it automatically:
+
+```bash
+./scripts/run-k8sgpt-analysis.sh
+```
+
 Artifacts are written under:
 
 ```text
@@ -124,6 +131,7 @@ scripts/
   run-conntrack-snapshot.sh
   run-provider-detection.sh
   run-k8s-object-snapshot.sh
+  run-k8sgpt-analysis.sh
 tools/summary/
   summarize-network-baseline.py
 tools/report/

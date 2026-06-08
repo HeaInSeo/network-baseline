@@ -27,6 +27,7 @@
 - iperf3 throughput baseline
 - DNS/Service/NetworkPolicy/MTU smoke check
 - result artifact 생성
+- K8s 리소스 적용 후 K8sGPT CLI 진단 artifact 생성
 
 `bori`:
 
@@ -85,6 +86,28 @@ make validate
 ./scripts/run-network-baseline-matrix.sh
 ```
 
+`run-network-baseline-matrix.sh`는 K8s 리소스를 적용하고 Job을 실행한 뒤
+마지막 단계에서 반드시 K8sGPT CLI 진단을 실행한다.
+
+```bash
+./scripts/run-k8sgpt-analysis.sh
+```
+
+기본 범위는 `network-baseline` namespace다. 클러스터 전체 진단이 필요하면
+아래처럼 명시한다.
+
+```bash
+K8SGPT_SCOPE=cluster ./scripts/run-k8sgpt-analysis.sh
+```
+
+운영 규칙:
+
+- K8s 리소스를 적용하거나 K8s 연동 테스트를 수행한 run은 K8sGPT artifact를 남겨야 한다.
+- `k8sgpt analyze`가 실패하면 run도 실패로 취급한다.
+- `--explain`은 기본으로 사용하지 않는다. AI backend 없이 Kubernetes 상태와 Event 기반 진단만 수행한다.
+- K8sGPT 결과는 app 로그를 대체하지 않는다. CrashLoopBackOff, ImagePullBackOff, Pending,
+  Service endpoint 문제 같은 리소스 상태 진단 evidence로 사용한다.
+
 개별 실행:
 
 ```bash
@@ -92,6 +115,7 @@ make validate
 ./scripts/run-network-policy-checks.sh
 ./scripts/run-mtu-smoke-check.sh
 ./scripts/run-network-baseline-fanout.sh
+./scripts/run-k8sgpt-analysis.sh
 ```
 
 MTU smoke size 조정:
@@ -115,6 +139,10 @@ artifacts/network-baseline/<run-id>/
   same-node-service-tcp.result.json
   cross-node-service-tcp.result.json
   fanout-tcp-5.result.json
+  k8sgpt-analysis.json
+  k8sgpt-analysis.txt
+  k8sgpt-analysis.stderr
+  k8sgpt-analysis.summary.json
 ```
 
 ## bori 연결 관점
@@ -145,4 +173,3 @@ bori verify/deploy
 - 실제 Job 실행 검증은 원격 VM host 또는 올바른 `KUBECONFIG`가 설정된 환경에서 진행해야 한다.
 - `mtu-smoke`는 DF bit 기반의 정확한 path MTU discovery가 아니라 smoke check다.
 - NetworkPolicy check는 CNI가 NetworkPolicy enforcement를 지원해야 의미가 있다.
-

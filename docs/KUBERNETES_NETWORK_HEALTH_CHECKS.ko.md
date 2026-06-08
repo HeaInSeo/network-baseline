@@ -93,8 +93,9 @@ artifacts/network-baseline/<run-id>/networkpolicy-allow-deny.deny.log
 검증 항목:
 
 - check Pod에서 iperf3 server Pod IP로 ICMP ping 실행
-- 기본 payload size: `1200 1400 1472`
-- payload size를 올려가며 기본적인 MTU/fragmentation 이상 여부 확인
+- 기본 required payload size: `1200 1400`
+- 기본 high-MTU probe payload size: `1472`
+- overlay 환경에서 1472 probe 실패는 곧바로 fail이 아니라 path MTU evidence로 기록
 
 실행:
 
@@ -105,7 +106,9 @@ artifacts/network-baseline/<run-id>/networkpolicy-allow-deny.deny.log
 원격 VM 기반 K8s 환경에서 size를 조정하려면:
 
 ```bash
-PING_PAYLOAD_SIZES="1200 1400 1472 8972" ./scripts/run-mtu-smoke-check.sh
+PING_PAYLOAD_SIZES="1200 1400" \
+HIGH_MTU_PING_PAYLOAD_SIZES="1472 8972" \
+  ./scripts/run-mtu-smoke-check.sh
 ```
 
 결과 파일:

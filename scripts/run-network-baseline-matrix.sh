@@ -37,6 +37,9 @@ run_one cross-node-service-tcp tcp
 env RUN_ID="${RUN_ID}" SCENARIO="fanout-tcp-5" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-network-baseline-fanout.sh"
 
+env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE:-network-baseline}" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-k8sgpt-analysis.sh"
+
 python3 - <<PY
 import json
 from pathlib import Path
