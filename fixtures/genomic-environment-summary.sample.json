@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "network-baseline.genomicMatrix.v1",
+  "runId": "genomic-environment-sample",
+  "status": "warn",
+  "results": [
+    {
+      "schemaVersion": "network-baseline.genomic.v1",
+      "runId": "genomic-environment-sample",
+      "scenario": {
+        "name": "image-pull-baseline",
+        "type": "image-pull-baseline"
+      },
+      "imagePull": {
+        "primary": {
+          "status": "pass"
+        },
+        "mirror": {
+          "status": "warn"
+        },
+        "digestMatched": true
+      },
+      "status": "warn",
+      "reasons": [
+        "mirror image not configured"
+      ]
+    },
+    {
+      "schemaVersion": "network-baseline.genomic.registry.v1",
+      "runId": "genomic-environment-sample",
+      "scenario": {
+        "name": "registry-connectivity-baseline",
+        "type": "registry-connectivity-baseline"
+      },
+      "registry": {
+        "primary": {
+          "status": "pass",
+          "httpCode": "401"
+        },
+        "mirror": {
+          "status": "skipped"
+        }
+      },
+      "status": "warn",
+      "reasons": [
+        "mirror registry URL not configured"
+      ]
+    },
+    {
+      "schemaVersion": "network-baseline.genomic.remoteFetch.v1",
+      "runId": "genomic-environment-sample",
+      "scenario": {
+        "name": "remote-fetch-http-baseline",
+        "type": "remote-fetch-http-baseline"
+      },
+      "remoteFetch": {
+        "status": "pass",
+        "sizeBytes": 1048576,
+        "fetchSeconds": 2,
+        "digestVerified": true,
+        "cleanupObserved": true
+      },
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.genomic.localReuse.v1",
+      "runId": "genomic-environment-sample",
+      "scenario": {
+        "name": "local-reuse-same-node-baseline",
+        "type": "local-reuse-same-node-baseline"
+      },
+      "localReuse": {
+        "placement": "same-node",
+        "nodeName": "lab-worker-0",
+        "digestVerified": true,
+        "cleanupObserved": true
+      },
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.genomic.churnGc.v1",
+      "runId": "genomic-environment-sample",
+      "scenario": {
+        "name": "job-churn-gc-baseline",
+        "type": "job-churn-gc-baseline"
+      },
+      "churn": {
+        "jobsCreated": 5,
+        "jobsCompleted": 5,
+        "jobsFailed": 0
+      },
+      "gc": {
+        "jobsRemaining": 0,
+        "podsRemaining": 0
+      },
+      "status": "pass",
+      "reasons": []
+    },
+    {
+      "schemaVersion": "network-baseline.k8sgpt.v1",
+      "runId": "genomic-environment-sample",
+      "scope": "namespace",
+      "findingCount": 1,
+      "status": "pass"
+    }
+  ]
+}

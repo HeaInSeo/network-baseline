@@ -55,3 +55,8 @@ summary = {
 (root / "genomic-environment-summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\\n", encoding="utf-8")
 print(f"genomic-environment-baseline: {status} results={len(results)} path={root / 'genomic-environment-summary.json'}")
 PY
+
+python3 "${ROOT_DIR}/tools/report/render-network-baseline-report.py" \
+  --run-dir "${ARTIFACT_DIR}" \
+  --summary "${ARTIFACT_DIR}/genomic-environment-summary.json" \
+  --out "${ARTIFACT_DIR}/report.md"

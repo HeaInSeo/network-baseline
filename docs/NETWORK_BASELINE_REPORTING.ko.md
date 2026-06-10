@@ -22,6 +22,14 @@ python3 tools/report/render-network-baseline-report.py \
   --run-dir artifacts/network-baseline/<run-id>
 ```
 
+genomic environment summary를 명시적으로 렌더링:
+
+```bash
+python3 tools/report/render-network-baseline-report.py \
+  --run-dir artifacts/network-baseline/<run-id> \
+  --summary artifacts/network-baseline/<run-id>/genomic-environment-summary.json
+```
+
 생성 파일:
 
 ```text
@@ -38,6 +46,16 @@ artifacts/network-baseline/<run-id>/report.md
 - Kubernetes object snapshot count
 - triage 순서
 
+`genomic-environment-summary.json` 입력일 때는 아래 항목을 별도 표로 보여준다.
+
+- image pull primary/mirror 상태
+- registry connectivity primary/mirror 상태
+- remote fetch bytes/digest/cleanup 상태
+- local reuse same-node/digest/cleanup 상태
+- Job churn/GC 상태
+- K8sGPT finding 수
+- bori gate decision: `pass`, `manual-review`, `block`
+
 ## 운영 해석 순서
 
 1. `fail` scenario를 먼저 본다.
@@ -51,4 +69,3 @@ artifacts/network-baseline/<run-id>/report.md
 
 bori는 `matrix-summary.json`을 machine-readable gate input으로 사용하고,
 `report.md`를 사람 검토용 artifact로 보존하는 방향이 적합하다.
-

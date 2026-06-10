@@ -35,6 +35,11 @@ report-smoke:
 	python3 tools/report/render-network-baseline-report.py \
 	  --run-dir /tmp/network-baseline-report-smoke \
 	  --out /tmp/network-baseline-report-smoke/report.md
+	cp fixtures/genomic-environment-summary.sample.json /tmp/network-baseline-report-smoke/genomic-environment-summary.json
+	python3 tools/report/render-network-baseline-report.py \
+	  --run-dir /tmp/network-baseline-report-smoke \
+	  --summary /tmp/network-baseline-report-smoke/genomic-environment-summary.json \
+	  --out /tmp/network-baseline-report-smoke/genomic-report.md
 
 kustomize:
 	kubectl kustomize deploy/iperf3 >/tmp/network-baseline-kustomize.yaml
