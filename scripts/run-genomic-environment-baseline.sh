@@ -11,6 +11,12 @@ mkdir -p "${ARTIFACT_DIR}"
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="image-pull-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-image-pull-baseline.sh"
 
+env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="registry-connectivity-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-registry-connectivity-baseline.sh"
+
+env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="remote-fetch-http-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-remote-fetch-http-baseline.sh"
+
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-k8sgpt-analysis.sh"
 

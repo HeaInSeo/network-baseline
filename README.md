@@ -74,6 +74,12 @@ SCENARIO=k8s-object-snapshot ./scripts/run-k8s-object-snapshot.sh
 PRIMARY_IMAGE=harbor.example/heainseo/jumi@sha256:... \
 MIRROR_IMAGE=ghcr.io/heainseo/jumi@sha256:... \
   ./scripts/run-image-pull-baseline.sh
+PRIMARY_REGISTRY_URL=https://harbor.example/v2/ \
+MIRROR_REGISTRY_URL=https://ghcr.io/v2/ \
+  ./scripts/run-registry-connectivity-baseline.sh
+FETCH_URL=https://artifact-source.example/data.bin \
+EXPECTED_SHA256=... \
+  ./scripts/run-remote-fetch-http-baseline.sh
 ```
 
 Any Kubernetes resource-apply or integration run must be followed by K8sGPT CLI
@@ -116,6 +122,8 @@ deploy/checks/
   dns-service-job.yaml
 deploy/genomic/
   image-pull-probe-pod.yaml
+  registry-connectivity-job.yaml
+  remote-fetch-http-job.yaml
 fixtures/
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
@@ -138,6 +146,8 @@ scripts/
   run-k8s-object-snapshot.sh
   run-k8sgpt-analysis.sh
   run-image-pull-baseline.sh
+  run-registry-connectivity-baseline.sh
+  run-remote-fetch-http-baseline.sh
   run-genomic-environment-baseline.sh
 tools/summary/
   summarize-network-baseline.py

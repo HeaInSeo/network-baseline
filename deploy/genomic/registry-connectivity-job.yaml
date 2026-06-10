@@ -1,0 +1,66 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: registry-connectivity
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: registry-connectivity
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: network-baseline
+        app.kubernetes.io/component: registry-connectivity
+    spec:
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: check
+          image: curlimages/curl:8.8.0
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-ceu"]
+          args:
+            - |
+              started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              body="/tmp/registry-body.txt"
+              metrics="/tmp/registry-metrics.txt"
+              echo "startedAt=${started_at}"
+              echo "role=${REGISTRY_ROLE}"
+              echo "registry=${REGISTRY_NAME}"
+              echo "url=${REGISTRY_URL}"
+              set +e
+              http_code="$(curl -sS -k -o "${body}" -w "%{http_code}" \
+                --connect-timeout "${CONNECT_TIMEOUT_SECONDS}" \
+                --max-time "${REQUEST_TIMEOUT_SECONDS}" \
+                "${REGISTRY_URL}")"
+              curl_status=$?
+              set -e
+              printf "curlStatus=%s\n" "${curl_status}"
+              printf "httpCode=%s\n" "${http_code}"
+              wc -c "${body}" | awk '{print "bodyBytes="$1}'
+              if [ "${curl_status}" -eq 0 ] && [ "${http_code}" != "000" ]; then
+                echo "result=pass"
+                exit 0
+              fi
+              echo "result=fail"
+              exit 1
+          env:
+            - name: REGISTRY_ROLE
+              value: primary
+            - name: REGISTRY_NAME
+              value: harbor
+            - name: REGISTRY_URL
+              value: https://harbor.example/v2/
+            - name: CONNECT_TIMEOUT_SECONDS
+              value: "5"
+            - name: REQUEST_TIMEOUT_SECONDS
+              value: "20"
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi

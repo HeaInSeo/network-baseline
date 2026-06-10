@@ -1,0 +1,90 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: remote-fetch-http
+  labels:
+    app.kubernetes.io/name: network-baseline
+    app.kubernetes.io/component: remote-fetch-http
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 300
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: network-baseline
+        app.kubernetes.io/component: remote-fetch-http
+    spec:
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 5
+      containers:
+        - name: fetch
+          image: curlimages/curl:8.8.0
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-ceu"]
+          args:
+            - |
+              artifact="/tmp/network-baseline-remote-fetch.bin"
+              started_epoch="$(date +%s)"
+              started_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              echo "startedAt=${started_at}"
+              echo "sourceUrl=${FETCH_URL}"
+              set +e
+              http_code="$(curl -sS -L -o "${artifact}" -w "%{http_code}" \
+                --connect-timeout "${CONNECT_TIMEOUT_SECONDS}" \
+                --max-time "${REQUEST_TIMEOUT_SECONDS}" \
+                "${FETCH_URL}")"
+              curl_status=$?
+              set -e
+              finished_epoch="$(date +%s)"
+              printf "curlStatus=%s\n" "${curl_status}"
+              printf "httpCode=%s\n" "${http_code}"
+              printf "fetchSeconds=%s\n" "$((finished_epoch - started_epoch))"
+              if [ ! -f "${artifact}" ]; then
+                echo "result=fail"
+                echo "failureLayer=http"
+                exit 1
+              fi
+              size_bytes="$(wc -c "${artifact}" | awk '{print $1}')"
+              digest="$(sha256sum "${artifact}" | awk '{print $1}')"
+              printf "sizeBytes=%s\n" "${size_bytes}"
+              printf "sha256=%s\n" "${digest}"
+              digest_verified="true"
+              if [ -n "${EXPECTED_SHA256}" ] && [ "${EXPECTED_SHA256}" != "${digest}" ]; then
+                digest_verified="false"
+              fi
+              rm -f "${artifact}"
+              cleanup_observed="false"
+              if [ ! -f "${artifact}" ]; then
+                cleanup_observed="true"
+              fi
+              printf "digestVerified=%s\n" "${digest_verified}"
+              printf "cleanupObserved=%s\n" "${cleanup_observed}"
+              if [ "${curl_status}" -eq 0 ] && [ "${http_code}" -ge 200 ] && [ "${http_code}" -lt 400 ] && [ "${digest_verified}" = "true" ] && [ "${cleanup_observed}" = "true" ]; then
+                echo "result=pass"
+                exit 0
+              fi
+              if [ "${digest_verified}" != "true" ]; then
+                echo "failureLayer=digest"
+              elif [ "${cleanup_observed}" != "true" ]; then
+                echo "failureLayer=cleanup"
+              else
+                echo "failureLayer=http"
+              fi
+              echo "result=fail"
+              exit 1
+          env:
+            - name: FETCH_URL
+              value: https://example.com/
+            - name: EXPECTED_SHA256
+              value: ""
+            - name: CONNECT_TIMEOUT_SECONDS
+              value: "5"
+            - name: REQUEST_TIMEOUT_SECONDS
+              value: "120"
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
