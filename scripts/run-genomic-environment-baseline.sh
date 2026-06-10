@@ -45,6 +45,8 @@ elif any(r.get("status") == "warn" for r in results):
     status = "warn"
 elif all(r.get("status") == "skipped" for r in results if "status" in r):
     status = "skipped"
+elif any(r.get("status") == "skipped" for r in results):
+    status = "warn"
 
 summary = {
     "schemaVersion": "network-baseline.genomicMatrix.v1",

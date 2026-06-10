@@ -166,7 +166,7 @@ def gate_lines(summary):
     status = summary.get("status", "warn")
     if status == "pass":
         decision = "pass"
-    elif status == "warn":
+    elif status in {"warn", "skipped"}:
         decision = "manual-review"
     else:
         decision = "block"
