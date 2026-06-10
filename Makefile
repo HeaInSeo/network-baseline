@@ -1,7 +1,7 @@
 .PHONY: validate summary-smoke report-smoke kustomize checks-kustomize genomic-kustomize crd-kustomize
 
 validate:
-	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh scripts/run-k8sgpt-analysis.sh scripts/run-image-pull-baseline.sh scripts/run-registry-connectivity-baseline.sh scripts/run-remote-fetch-http-baseline.sh scripts/run-genomic-environment-baseline.sh
+	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh scripts/run-k8sgpt-analysis.sh scripts/run-image-pull-baseline.sh scripts/run-registry-connectivity-baseline.sh scripts/run-remote-fetch-http-baseline.sh scripts/run-local-reuse-same-node-baseline.sh scripts/run-genomic-environment-baseline.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
 	python3 -m py_compile tools/report/render-network-baseline-report.py
 	$(MAKE) summary-smoke

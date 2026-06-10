@@ -182,6 +182,23 @@ object storage나 특정 transfer backend를 전제로 하지 않는다.
 - local path 권한, cleanup, stale artifact 위험을 조기에 드러낸다.
 - 이후 AH/JUMI placement policy와 연결할 수 있는 evidence를 남긴다.
 
+현재 구현:
+
+```bash
+ARTIFACT_KIB=1024 \
+  ./scripts/run-local-reuse-same-node-baseline.sh
+```
+
+Producer Job은 node-local hostPath에 artifact를 쓰고, Consumer Job은 producer와
+같은 node에 `nodeName`으로 고정되어 artifact를 읽는다. Consumer는 producer가
+기록한 `sha256`과 `sizeBytes`를 검증한다. Cleanup Job은 같은 node에서
+run-specific directory를 삭제하고 `cleanupObserved`를 기록한다.
+
+기본 hostPath는 `/tmp/network-baseline-local-reuse`이며, 필요하면
+`NODE_LOCAL_HOST_PATH`로 바꿀 수 있다. 이 경로는 PVC가 아니며, 운영 storage
+성능 벤치마크가 아니라 node-local reuse 계약과 cleanup 위험을 검증하기 위한
+임시 기준선이다.
+
 ### 4. Job Fan-out And Churn Baseline
 
 유전체 분석 DAG는 여러 node와 sample을 병렬 실행할 수 있다. 이때 단일
@@ -282,7 +299,7 @@ registry/data path인지, Kubernetes network/provider 문제인지 더 빨리
 1. `image-pull-baseline` — 구현됨: `scripts/run-image-pull-baseline.sh`
 2. `registry-connectivity-baseline` — 구현됨: `scripts/run-registry-connectivity-baseline.sh`
 3. `remote-fetch-http-baseline` — 구현됨: `scripts/run-remote-fetch-http-baseline.sh`
-4. `local-reuse-same-node-baseline`
+4. `local-reuse-same-node-baseline` — 구현됨: `scripts/run-local-reuse-same-node-baseline.sh`
 5. `fanout-churn-gc-baseline`
 
 현재 VM/K8s 환경은 아직 테스트 중이므로, 구현은 manifest/script/schema

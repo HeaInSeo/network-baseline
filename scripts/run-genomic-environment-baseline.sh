@@ -17,6 +17,9 @@ env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="registry-connectivity-
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="remote-fetch-http-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-remote-fetch-http-baseline.sh"
 
+env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="local-reuse-same-node-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-local-reuse-same-node-baseline.sh"
+
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-k8sgpt-analysis.sh"
 

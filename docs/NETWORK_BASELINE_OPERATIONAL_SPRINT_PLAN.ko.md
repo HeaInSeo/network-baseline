@@ -247,6 +247,7 @@ node-local reuse, fan-out churn을 baseline에 포함한다.
 - `deploy/genomic/remote-fetch-http-job.yaml`
 - `scripts/run-remote-fetch-http-baseline.sh`
 - `deploy/genomic/local-reuse-same-node-job.yaml`
+- `scripts/run-local-reuse-same-node-baseline.sh`
 - `deploy/fanout/fanout-client-job.yaml`
 - `scripts/run-genomic-environment-baseline.sh`
 - result JSON 내 `imagePull`, `registry`, `remoteFetch`, `localReuse`, `fanout`, `gc` section
@@ -272,10 +273,12 @@ node-local reuse, fan-out churn을 baseline에 포함한다.
 - `deploy/genomic/image-pull-probe-pod.yaml`
 - `deploy/genomic/registry-connectivity-job.yaml`
 - `deploy/genomic/remote-fetch-http-job.yaml`
+- `deploy/genomic/local-reuse-same-node-job.yaml`
 - `scripts/run-image-pull-baseline.sh`
 - `scripts/run-registry-connectivity-baseline.sh`
 - `scripts/run-remote-fetch-http-baseline.sh`
-- `scripts/run-genomic-environment-baseline.sh` — 현재는 image pull, registry connectivity, remote fetch, K8sGPT 진단을 묶는다.
+- `scripts/run-local-reuse-same-node-baseline.sh`
+- `scripts/run-genomic-environment-baseline.sh` — 현재는 image pull, registry connectivity, remote fetch, local reuse, K8sGPT 진단을 묶는다.
 
 ## Sprint N5 - 운영 UX와 리포트
 

@@ -80,6 +80,8 @@ MIRROR_REGISTRY_URL=https://ghcr.io/v2/ \
 FETCH_URL=https://artifact-source.example/data.bin \
 EXPECTED_SHA256=... \
   ./scripts/run-remote-fetch-http-baseline.sh
+ARTIFACT_KIB=1024 \
+  ./scripts/run-local-reuse-same-node-baseline.sh
 ```
 
 Any Kubernetes resource-apply or integration run must be followed by K8sGPT CLI
@@ -122,6 +124,7 @@ deploy/checks/
   dns-service-job.yaml
 deploy/genomic/
   image-pull-probe-pod.yaml
+  local-reuse-same-node-job.yaml
   registry-connectivity-job.yaml
   remote-fetch-http-job.yaml
 fixtures/
@@ -148,6 +151,7 @@ scripts/
   run-image-pull-baseline.sh
   run-registry-connectivity-baseline.sh
   run-remote-fetch-http-baseline.sh
+  run-local-reuse-same-node-baseline.sh
   run-genomic-environment-baseline.sh
 tools/summary/
   summarize-network-baseline.py
