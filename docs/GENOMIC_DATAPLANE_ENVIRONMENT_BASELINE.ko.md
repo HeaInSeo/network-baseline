@@ -221,6 +221,19 @@ cleanup에 미치는 영향이다.
 - cleanup이 누락되어 다음 run을 오염시키지 않는지 확인한다.
 - bori/operator gate에서 반복 가능한 warn/fail 기준을 만들 수 있다.
 
+현재 구현:
+
+```bash
+CHURN_JOBS=20 \
+  ./scripts/run-job-churn-gc-baseline.sh
+```
+
+이 기준선은 짧은 Kubernetes Job을 여러 개 만들고 완료를 기다린 뒤 명시적으로
+삭제한다. 생성 전, 제출 후, 완료 후, cleanup 후의 Job/Pod/Event snapshot을
+artifact로 남긴다. `jobsCompleted`, `jobsFailed`, `submitSeconds`,
+`completionSeconds`, `jobsRemaining`, `podsRemaining`을 기준으로 pass/warn/fail을
+판단한다.
+
 ## 결과 구조
 
 N4 결과 JSON은 아래 section을 가져야 한다.
@@ -300,7 +313,7 @@ registry/data path인지, Kubernetes network/provider 문제인지 더 빨리
 2. `registry-connectivity-baseline` — 구현됨: `scripts/run-registry-connectivity-baseline.sh`
 3. `remote-fetch-http-baseline` — 구현됨: `scripts/run-remote-fetch-http-baseline.sh`
 4. `local-reuse-same-node-baseline` — 구현됨: `scripts/run-local-reuse-same-node-baseline.sh`
-5. `fanout-churn-gc-baseline`
+5. `fanout-churn-gc-baseline` — 구현됨: `scripts/run-job-churn-gc-baseline.sh`
 
 현재 VM/K8s 환경은 아직 테스트 중이므로, 구현은 manifest/script/schema
 검증까지 먼저 진행하고 실제 원격 클러스터 실행은 VM 사용 가능 시점에

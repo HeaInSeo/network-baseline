@@ -20,6 +20,9 @@ env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="remote-fetch-http-base
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="local-reuse-same-node-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-local-reuse-same-node-baseline.sh"
 
+env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" SCENARIO="job-churn-gc-baseline" ARTIFACT_DIR="${ARTIFACT_DIR}" \
+  "${ROOT_DIR}/scripts/run-job-churn-gc-baseline.sh"
+
 env RUN_ID="${RUN_ID}" NAMESPACE="${NAMESPACE}" ARTIFACT_DIR="${ARTIFACT_DIR}" \
   "${ROOT_DIR}/scripts/run-k8sgpt-analysis.sh"
 
