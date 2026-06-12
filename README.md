@@ -17,12 +17,21 @@ problems before larger genomic workloads are tested.
 - optional UDP jitter/loss
 - fan-out degradation
 - namespace-level repeatability across controlled runs
+- registry and image pull readiness for Harbor primary / GHCR mirror paths
+- remote artifact fetch, digest verification, and cleanup
+- node-local same-node reuse without PVC
+- Kubernetes Job churn and explicit GC/cleanup evidence
+- K8sGPT findings after Kubernetes integration runs
 
 ## What This Does Not Claim
 
 Passing this baseline does not prove that a genomic workflow is production
 ready. It only proves that the selected Kubernetes network paths satisfy the
 minimum operational network thresholds for the test window.
+
+`skipped` scenarios are not treated as production success. If required inputs
+such as Harbor/GHCR image references or artifact URLs are missing, the genomic
+environment gate reports `manual-review`.
 
 ## Quick Start
 
@@ -56,6 +65,27 @@ The default matrix currently includes:
 
 Single-node clusters record `cross-node-service-tcp` as `skipped`.
 
+Run the genomic dataplane environment baseline:
+
+```bash
+./scripts/run-genomic-environment-baseline.sh
+```
+
+This produces:
+
+```text
+artifacts/network-baseline/<run-id>/genomic-environment-summary.json
+artifacts/network-baseline/<run-id>/gate-summary.json
+artifacts/network-baseline/<run-id>/report.md
+```
+
+`gate-summary.json` is the machine-readable artifact intended for bori or other
+operator agents. Its `decision` field is one of:
+
+- `pass`
+- `manual-review`
+- `block`
+
 Run one scenario:
 
 ```bash
@@ -86,6 +116,19 @@ CHURN_JOBS=20 \
   ./scripts/run-job-churn-gc-baseline.sh
 ```
 
+Run the genomic baseline with operational inputs:
+
+```bash
+PRIMARY_IMAGE=harbor.example/heainseo/jumi@sha256:... \
+MIRROR_IMAGE=ghcr.io/heainseo/jumi@sha256:... \
+PRIMARY_REGISTRY_URL=https://harbor.example/v2/ \
+MIRROR_REGISTRY_URL=https://ghcr.io/v2/ \
+FETCH_URL=https://artifact-source.example/data.bin \
+EXPECTED_SHA256=... \
+CHURN_JOBS=20 \
+  ./scripts/run-genomic-environment-baseline.sh
+```
+
 Any Kubernetes resource-apply or integration run must be followed by K8sGPT CLI
 diagnosis. The matrix script runs it automatically:
 
@@ -108,6 +151,7 @@ docs/
   KUBERNETES_NETWORK_HEALTH_CHECKS.ko.md
   NETWORK_BASELINE_REPORTING.ko.md
   NETWORK_BASELINE_OPERATIONAL_SPRINT_PLAN.ko.md
+  OPERATIONAL_COMPLETION_STATUS.ko.md
   PROVIDER_NEUTRAL_OBSERVABILITY_BASELINE.ko.md
   REMOTE_VM_INFRA_LAB_RUNBOOK.ko.md
   NETWORK_BASELINE_SCOPE.md
@@ -131,6 +175,7 @@ deploy/genomic/
   registry-connectivity-job.yaml
   remote-fetch-http-job.yaml
 fixtures/
+  genomic-environment-summary.sample.json
   iperf3-tcp.sample.json
   iperf3-udp.sample.json
   matrix-summary.sample.json
@@ -198,12 +243,31 @@ python3 tools/report/render-network-baseline-report.py \
 
 ## Operational Exit Criteria
 
-This baseline reaches operational readiness when:
+N6 app preflight integration is intentionally out of scope for the current
+completion pass. Excluding N6, the implementation-side exit criteria are met:
 
 - standalone TCP and UDP measurements are repeatable
 - same-node, cross-node, service-path, and fan-out profiles are supported
-- JSON result schema is stable
-- thresholds are versioned
-- summaries clearly distinguish pass, warn, and fail
-- runbooks cover cleanup and failure triage
-- dataplane apps can call this baseline before app-specific smoke tests
+- genomic environment checks cover image pull, registry connectivity, remote fetch, local reuse, and Job churn/GC
+- PVC is not required for the node-local reuse baseline
+- K8sGPT analysis is part of integration runs
+- kube-linter is wired through GitHub Actions
+- JSON summaries distinguish `pass`, `warn`, `fail`, and `skipped`
+- `gate-summary.json` exposes `pass`, `manual-review`, and `block`
+- Markdown reports are generated for operator review
+
+## Remaining External Inputs
+
+The remaining work is operational evidence collection, not N6 implementation.
+These values must come from the deployment environment:
+
+- Harbor primary image reference
+- GHCR mirror image reference
+- expected Harbor/GHCR digest relationship
+- real artifact URL
+- expected artifact SHA-256
+- artifact size targets, such as 10MB, 100MB, and 1GiB+
+
+Until those values are supplied, image pull, registry connectivity, and remote
+fetch checks may be `skipped`, and the correct gate decision is
+`manual-review`.
