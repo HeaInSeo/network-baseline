@@ -161,6 +161,8 @@ tools/summary/
   summarize-network-baseline.py
 tools/report/
   render-network-baseline-report.py
+tools/gate/
+  render-gate-summary.py
 ```
 
 ## Local Validation

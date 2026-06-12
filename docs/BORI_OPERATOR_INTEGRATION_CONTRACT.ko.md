@@ -133,6 +133,29 @@ status:
       status: "True"
 ```
 
+현재 shell 기반 실행에서는 위 status를 직접 CRD에 쓰지 않는다. 대신 bori가
+읽을 수 있는 machine-readable artifact로 `gate-summary.json`을 생성한다.
+
+```json
+{
+  "schemaVersion": "network-baseline.gateSummary.v1",
+  "runId": "genomic-environment-20260612T000000Z",
+  "status": "warn",
+  "decision": "manual-review",
+  "artifactDirectory": "artifacts/network-baseline/genomic-environment-20260612T000000Z",
+  "summaryPath": "artifacts/network-baseline/genomic-environment-20260612T000000Z/genomic-environment-summary.json",
+  "reportPath": "artifacts/network-baseline/genomic-environment-20260612T000000Z/report.md",
+  "blockingScenarios": [],
+  "manualReviewScenarios": ["image-pull-baseline"],
+  "requiredInputsMissing": ["image-pull-baseline"],
+  "scenarioResults": []
+}
+```
+
+bori는 초기 통합에서 CRD status 대신 `gate-summary.json.decision`을 읽어도 된다.
+향후 operator/controller 단계에서는 같은 값을 `NetworkBaselineRun.status.result`
+및 condition으로 투영하면 된다.
+
 ## Phase 값
 
 권장 phase:
@@ -182,18 +205,19 @@ lastTransitionTime: "2026-06-06T00:00:00Z"
 권장 기본 판단:
 
 ```text
-result=pass
+decision=pass
   -> rollout 진행 가능
 
-result=warn
-  -> policy에 따라 진행, 수동 승인, 또는 중단
+decision=manual-review
+  -> policy에 따라 수동 승인, 제한 진행, 또는 중단
 
-result=fail
+decision=block
   -> rollout 중단
-
-result=skipped
-  -> policy에 따라 진행 또는 수동 승인
 ```
+
+`skipped`는 운영상 성공이 아니다. Harbor/GHCR image ref, registry URL, artifact
+URL 같은 필수 입력이 없어서 생략된 scenario가 있으면 기본 decision은
+`manual-review`다.
 
 bori가 app upgrade를 처리할 때 권장 흐름:
 
@@ -212,9 +236,10 @@ bori가 app upgrade를 처리할 때 권장 흐름:
 `artifactRef.path` 아래에는 최소한 다음 파일이 있어야 한다.
 
 ```text
-matrix-summary.json
+genomic-environment-summary.json
+gate-summary.json
+report.md
 <scenario>.result.json
-<scenario>.iperf3.json
 ```
 
 운영 수준으로 확장되면 다음 artifact를 추가한다.
@@ -225,10 +250,12 @@ node-snapshot.json
 cilium-status.json
 hubble-flows.json
 provider-detection.result.json
-image-pull.result.json
-storage.result.json
-fanout.result.json
-report.md
+image-pull-baseline.result.json
+registry-connectivity-baseline.result.json
+remote-fetch-http-baseline.result.json
+local-reuse-same-node-baseline.result.json
+job-churn-gc-baseline.result.json
+k8sgpt-analysis.summary.json
 ```
 
 Provider artifact는 optional이다. provider가 없다는 이유로 baseline이 실패해서는
@@ -258,7 +285,9 @@ rollout manager와 연결할 때 사용한다.
 
 - shell script로 baseline 실행
 - result JSON 생성
-- matrix summary 생성
+- genomic environment summary 생성
+- gate summary 생성
+- Markdown report 생성
 - threshold profile 사용
 
 향후 bori 통합 시 필요한 것:

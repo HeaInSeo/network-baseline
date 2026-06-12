@@ -62,3 +62,8 @@ python3 "${ROOT_DIR}/tools/report/render-network-baseline-report.py" \
   --run-dir "${ARTIFACT_DIR}" \
   --summary "${ARTIFACT_DIR}/genomic-environment-summary.json" \
   --out "${ARTIFACT_DIR}/report.md"
+
+python3 "${ROOT_DIR}/tools/gate/render-gate-summary.py" \
+  --run-dir "${ARTIFACT_DIR}" \
+  --summary "${ARTIFACT_DIR}/genomic-environment-summary.json" \
+  --out "${ARTIFACT_DIR}/gate-summary.json"

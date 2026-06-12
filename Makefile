@@ -4,6 +4,7 @@ validate:
 	bash -n scripts/run-network-baseline.sh scripts/run-network-baseline-matrix.sh scripts/run-network-baseline-fanout.sh scripts/run-network-health-checks.sh scripts/run-network-policy-checks.sh scripts/run-mtu-smoke-check.sh scripts/run-node-reachability-check.sh scripts/run-conntrack-snapshot.sh scripts/run-provider-detection.sh scripts/run-k8s-object-snapshot.sh scripts/run-k8sgpt-analysis.sh scripts/run-image-pull-baseline.sh scripts/run-registry-connectivity-baseline.sh scripts/run-remote-fetch-http-baseline.sh scripts/run-local-reuse-same-node-baseline.sh scripts/run-job-churn-gc-baseline.sh scripts/run-genomic-environment-baseline.sh
 	python3 -m py_compile tools/summary/summarize-network-baseline.py
 	python3 -m py_compile tools/report/render-network-baseline-report.py
+	python3 -m py_compile tools/gate/render-gate-summary.py
 	$(MAKE) summary-smoke
 	$(MAKE) report-smoke
 	$(MAKE) kustomize
@@ -40,6 +41,10 @@ report-smoke:
 	  --run-dir /tmp/network-baseline-report-smoke \
 	  --summary /tmp/network-baseline-report-smoke/genomic-environment-summary.json \
 	  --out /tmp/network-baseline-report-smoke/genomic-report.md
+	python3 tools/gate/render-gate-summary.py \
+	  --run-dir /tmp/network-baseline-report-smoke \
+	  --summary /tmp/network-baseline-report-smoke/genomic-environment-summary.json \
+	  --out /tmp/network-baseline-report-smoke/gate-summary.json
 
 kustomize:
 	kubectl kustomize deploy/iperf3 >/tmp/network-baseline-kustomize.yaml

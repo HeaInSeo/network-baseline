@@ -34,6 +34,7 @@ python3 tools/report/render-network-baseline-report.py \
 
 ```text
 artifacts/network-baseline/<run-id>/report.md
+artifacts/network-baseline/<run-id>/gate-summary.json
 ```
 
 ## 리포트 구성
@@ -55,6 +56,30 @@ artifacts/network-baseline/<run-id>/report.md
 - Job churn/GC 상태
 - K8sGPT finding 수
 - bori gate decision: `pass`, `manual-review`, `block`
+
+## Gate Summary JSON
+
+`run-genomic-environment-baseline.sh`는 `genomic-environment-summary.json`과
+`report.md`에 더해 `gate-summary.json`을 생성한다. bori나 다른 운영 agent는
+Markdown을 파싱하지 않고 이 JSON만 읽으면 된다.
+
+핵심 필드:
+
+- `decision`: `pass`, `manual-review`, `block`
+- `status`: 원본 summary의 전체 상태
+- `requiredInputsMissing`: 입력값 미비로 `skipped`된 scenario
+- `blockingScenarios`: gate를 막아야 하는 scenario
+- `manualReviewScenarios`: 수동 검토가 필요한 scenario
+- `scenarioResults[].evidence`: 관련 artifact path
+
+판정 정책:
+
+- `fail`이 하나라도 있으면 `block`
+- `warn` 또는 `skipped`가 하나라도 있으면 `manual-review`
+- 모든 필수 scenario가 `pass`이면 `pass`
+
+따라서 Harbor/GHCR image ref 또는 artifact URL이 없어서 image pull, registry,
+remote fetch가 `skipped`인 실행은 운영상 `pass`가 아니라 `manual-review`다.
 
 ## 운영 해석 순서
 
